@@ -29,7 +29,7 @@ private:
     void calcFitness();
 
     int nVillages_;
-    size_t villageSize_;
+    int villageSize_;
     double mutaFactor_;
     double crossFactor_;
     double topX_;

@@ -5,7 +5,7 @@
 
 int main()
 {
-    auto best = GeneticTrainer<TrainerPhenotype>::survivalOfTheFittest(10000, 60000, 5, 20);
+    auto best = GeneticTrainer<TrainerPhenotype>::survivalOfTheFittest(10000, 60000, 3, 30);
 
     std::cout << "Fitness: " << best.fitness() << std::endl;
     std::cout << "Result: " << best.serialize() << std::endl;

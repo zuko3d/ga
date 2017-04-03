@@ -19,10 +19,10 @@ public:
             int maxEpochs,
             int64_t maxTimeMilliseconds,
             int nVillages,
-            size_t villageSize,
-            double mutaFactor = 0.35,
-            double crossFactor = 0.15,
-            double topX = 0.3,
+            int villageSize,
+            double mutaFactor = 0.75,
+            double crossFactor = 0.85,
+            double topX = 0.7,
             double stagnationCoef = 1.01
             ) {
             std::vector<Village<Creature> > villages;
