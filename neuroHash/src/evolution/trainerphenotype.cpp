@@ -2,11 +2,11 @@
 
 #include "testphenotypediofant.h"
 
-const int kTotalPop = 1000;
+const int kTotalPop = 200;
 
 TrainerPhenotype::TrainerPhenotype()
 {
-    nVillages_ = 1 + hrand() % 200;
+    nVillages_ = 1 + hrand() % kTotalPop;
     if(nVillages_ > kTotalPop) nVillages_ = kTotalPop;
     villageSize_ = kTotalPop / nVillages_;
     mutaFactor_ = hRnd();
@@ -20,7 +20,7 @@ TrainerPhenotype TrainerPhenotype::mutate()
 {
     TrainerPhenotype ret(*this);
 
-    ret.nVillages_ += hrand() % 10 - 5;
+    ret.nVillages_ += hrand() % 11 - 5;
     if(ret.nVillages_ > kTotalPop) ret.nVillages_ = kTotalPop;
     if(ret.nVillages_ < 1) ret.nVillages_ = 1;
 
@@ -52,7 +52,7 @@ void TrainerPhenotype::calcFitness()
     fitness_ = 1.0;
     for(int i = 0; i < 5; i++) {
         auto result = GeneticTrainer<TestPhenotypeDiofant>::survivalOfTheFittest(
-                    10000, 300, nVillages_, villageSize_, mutaFactor_, crossFactor_, topX_).fitness();
+                    10000, 200, nVillages_, villageSize_, mutaFactor_, crossFactor_, topX_).fitness();
 
         if(fitness_ > result) fitness_ = result;
     }

@@ -23,7 +23,8 @@ public:
             double mutaFactor = 0.75,
             double crossFactor = 0.85,
             double topX = 0.7,
-            double stagnationCoef = 1.01
+            double stagnationCoef = 1.01,
+            int innovationsProtectedEpochs = 5
             ) {
             std::vector<Village<Creature> > villages;
             villages.resize(nVillages);
@@ -38,13 +39,15 @@ public:
             for(epoch = 0; epoch < maxEpochs; epoch++) {
                 if(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count() >= maxTimeMilliseconds) {
                     //std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count() << " msec elapsed, exiting trainig\n";
-                    break;
+                    if(epoch >= innovationsProtectedEpochs * 2) {
+                      break;
+                    }
                 }
 
                 std::vector<std::thread> threads;
                 for(auto& village: villages){
-                    threads.push_back(std::thread(handleVillage, std::ref(village), mutaFactor, crossFactor, topX));
-                    //handleVillage(village, mutaFactor, crossFactor, topX);
+                    //threads.push_back(std::thread(handleVillage, std::ref(village), mutaFactor, crossFactor, topX));
+                    handleVillage(village, mutaFactor, crossFactor, topX);
                 }
 
                 for(auto& _thread: threads){
@@ -57,23 +60,28 @@ public:
                         for(auto& vlg: villages) {
                             village.push_back(vlg[(int) (topX * hRnd() * ((double) vlg.size()))]);
                         }
-                        village.innovationsProtected = 5;
+                        village.innovationsProtected = innovationsProtectedEpochs;
                     }
 
-                    auto best = village.front().fitness();
-                    auto worst = village.back().fitness();
-                    if(!village.sorted){
-                        for(auto& creature: village){
-                            if(creature.fitness() > best) best = creature.fitness();
-                            if(creature.fitness() < worst) worst = creature.fitness();
-                        }
+                    double best = -1.0, worst = 1.0;
+                    if(village.size() > 0) {
+                      best = village.front().fitness();
+                      worst = village.back().fitness();
+                      if(!village.sorted){
+                          for(auto& creature: village){
+                              if(creature.fitness() > best) best = creature.fitness();
+                              if(creature.fitness() < worst) worst = creature.fitness();
+                          }
+                      }
                     }
                     if((best / worst) < stagnationCoef) {
                         stagnatedVillages++;
                         for(auto& vlg: villages) {
-                            village.push_back(vlg[(int) (topX * hRnd() * ((double) vlg.size()))]);
+                            if(vlg.size() > 0) {
+                              village.push_back(vlg[(int) (topX * hRnd() * ((double) vlg.size()))]);
+                            }
                         }
-                        village.innovationsProtected = 5;
+                        village.innovationsProtected = innovationsProtectedEpochs;
                     }
                 }
 
@@ -122,7 +130,9 @@ void GeneticTrainer<Creature>::handleVillage(Village<Creature> &village, double 
     if(village.innovationsProtected){
         village.innovationsProtected--;
     } else {
-        village.resize(static_cast<size_t>(static_cast<double>(village.size()) * topX));
+      size_t newSize = static_cast<size_t>(static_cast<double>(village.size()) * topX);
+      if(newSize < 1) newSize  =1;
+      village.resize(newSize);
     }
 
     village.reserve(village.size() * (1.1 + mutationFactor + crossFactor));

@@ -6,7 +6,7 @@
 #include <vector>
 #include <algorithm>
 
-const int kEpochsToProtectInnovations = 20;
+const int kEpochsToProtectInnovations = 5;
 
 template <class Creature>
 class Village : public std::vector<Creature>{
@@ -21,10 +21,32 @@ public:
     int innovationsProtected = kEpochsToProtectInnovations;
 
     void push_back (const Creature& val) {
-        if(val.fitness() > std::vector<Creature>::back().fitness()) {
-            sorted = false;
+        if(std::vector<Creature>::size() > 0) {
+          if(val.fitness() > std::vector<Creature>::back().fitness()) {
+              sorted = false;
+          }
+        } else {
+              sorted = true;
         }
         std::vector<Creature>::push_back(val);
+    }
+
+    Creature front() const {
+        if(std::vector<Creature>::size() == 0) {
+            std::cout << "vector is empty!\n";
+            assert(false);
+        }
+
+        return std::vector<Creature>::front();
+    }
+
+    Creature back() const {
+        if(std::vector<Creature>::size() == 0) {
+            std::cout << "vector is empty!\n";
+            assert(false);
+        }
+
+        return std::vector<Creature>::back();
     }
 
     bool sorted = false;
