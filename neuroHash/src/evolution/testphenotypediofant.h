@@ -8,13 +8,24 @@ class TestPhenotypeDiofant : public Phenotype
 public:
     TestPhenotypeDiofant();
 
-    double fitness() const { assert(fitness_ >= 0); return fitness_; }
+    double fitness() const { 
+		if (fitness_ < 0) {
+			std::cout << __FUNCTION__<< " fitness_ = " << fitness_ << "\n";
+			assert(fitness_ >= 0);
+		}		
+		return fitness_; 
+	}
 
     TestPhenotypeDiofant mutate();
 
     TestPhenotypeDiofant cross(const TestPhenotypeDiofant &otherParent) const;
 
-    std::string serialize() const { return std::to_string(x_) + ", " + std::to_string(y_); }
+    std::string serialize() const { return	std::to_string(x_) + ", " + 
+											std::to_string(y_) + ", " +
+											std::to_string(a_) + ", " +
+											std::to_string(b_) + ", " +
+											std::to_string(c_) + ", " +
+											std::to_string(d_) + ", ";}
 
     TestPhenotypeDiofant operator+(const TestPhenotypeDiofant& otherParent) const {
         return this->cross(otherParent);

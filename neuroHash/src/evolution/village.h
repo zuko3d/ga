@@ -50,6 +50,7 @@ public:
     }
 
     bool sorted = false;
+	double prevFitness = 0.0;
 };
 
 #endif // VILLAGE_H

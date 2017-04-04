@@ -28,8 +28,8 @@ public:
 private:
     void calcFitness();
 
-    int nVillages_;
-    int villageSize_;
+    size_t nVillages_;
+	size_t villageSize_;
     double mutaFactor_;
     double crossFactor_;
     double topX_;
