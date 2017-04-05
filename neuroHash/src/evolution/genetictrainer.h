@@ -36,10 +36,15 @@ public:
 		if (outputLevel > 20) {
 			std::cout << __FUNCTION__ << " Generating initial population..." << std::endl;
 		}
+		auto ts = std::chrono::system_clock::now();
 
         for(auto& village: villages) {
             village.resize(villageSize);
         }
+
+		if (outputLevel > 20) {
+			std::cout << " Generation took " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - ts).count()  << " msec" << std::endl;
+		}
 
         auto startTime = std::chrono::system_clock::now();
 
@@ -75,10 +80,12 @@ public:
             }
 
             size_t stagnatedVillages = 0;
+			double bestScore = 0.0;
             for(auto& village: villages){
                 double nearBest = -1.0;
                 if(village.size() > 0) {
 					village.sort();
+					if (village[0].fitness() > bestScore) bestScore = village[0].fitness();
 					nearBest = village[std::min(villageSize / 2, village.size() - 1)].fitness();
 					if (outputLevel > 86) {
 						std::cout << "village\n\tnear-best = " << nearBest;
@@ -90,18 +97,31 @@ public:
                 }
 				if (nearBest < village.prevFitness * stagnationCoef) {
 					if(!village.innovationsProtected) stagnatedVillages++;
+					village.sort();
+					size_t newSize = static_cast<size_t>(static_cast<double>(village.size()) * topX);
+					if (newSize < 1) newSize = 1;
+					if (newSize > maxPopulation) newSize = maxPopulation;
+					village.resize(newSize);
+
 					if ((village.size() < villageSize)  && (outputLevel > 95)) {
 						std::cout << "Appending " << villageSize - village.size() << " values" << std::endl;
 					}
 					while(village.size() < villageSize) {
-						auto& vlg = villages[hrand() % nVillages];
-						village.push_back(vlg[(size_t)(topX * hRnd() * ((double)vlg.size()))]);
+						if (hrand() % 2) {
+							auto& vlg1 = villages[hrand() % nVillages];
+							auto& vlg2 = villages[hrand() % nVillages];
+							village.push_back(village[0].cross(vlg1[(size_t)(topX * hRnd() * ((double)vlg1.size()))], vlg2[(size_t)(topX * hRnd() * ((double)vlg2.size()))]));
+						} else {
+							village.push_back(Creature());
+						}
 					}
-					village.innovationsProtected = 1;
+					village.innovationsProtected = innovationsProtectedEpochs;
 				}
 				village.prevFitness = std::max(village.prevFitness, nearBest);
             }
-
+			if (outputLevel > 80) {
+				std::cout << " bestScore = " << bestScore << std::endl;
+			}
 			if (outputLevel > 85) {
 				std::cout << __FUNCTION__ << " stagnatedVillages = " << stagnatedVillages << std::endl;
 			}
@@ -173,7 +193,7 @@ void GeneticTrainer<Creature>::handleVillage(Village<Creature> &village, double 
         }
 
         if(hRnd() < crossFactor) {
-            village.push_back(village[i] + village[hrand() % initialSize]);
+            village.push_back(village[i].cross(village[hrand() % initialSize], village[hrand() % initialSize]));
         }
     }
 }

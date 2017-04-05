@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <cassert>
-
+#include <string>
 #include <random>
 
 inline double hRnd() // random double [0 ... 1]
@@ -17,11 +17,10 @@ inline double hRnd() // random double [0 ... 1]
 
 inline unsigned int hrand(void)
 {
-	/*
 	static thread_local std::mt19937 generator;
 	std::uniform_int_distribution<unsigned int> distribution(0, INT_MAX);
-	return distribution(generator);
-	*/
+	return distribution(generator);	
+	/*
 	static thread_local uint64_t __s__[2];
 	uint64_t x = __s__[0];
 	uint64_t const y = __s__[1];
@@ -29,6 +28,7 @@ inline unsigned int hrand(void)
 	x ^= x << 23; // a
 	__s__[1] = x ^ y ^ (x >> 17) ^ (y >> 26); // b, c
 	return __s__[1] + y;
+	*/
 }
 
 #endif // GLOBAL_H

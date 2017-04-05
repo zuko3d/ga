@@ -1,6 +1,6 @@
 #include "trainerphenotype.h"
 
-#include "testphenotypediofant.h"
+#include "../../../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h"
 
 const int kTotalPop = 100;
 
@@ -56,9 +56,9 @@ void TrainerPhenotype::calcFitness()
 {
     fitness_ = 1.0;
     for(int i = 0; i < 40; i++) {
-        auto result = GeneticTrainer<TestPhenotypeDiofant>::survivalOfTheFittest(
-                    10000, 100, nVillages_, villageSize_, mutaFactor_, crossFactor_, topX_).fitness();
+        auto result = GeneticTrainer<Simple2x2x1Perceptron>::survivalOfTheFittest(
+                    10000, 400, nVillages_, villageSize_, mutaFactor_, crossFactor_, topX_);
 
-        if(fitness_ > result) fitness_ = result;
+        if(fitness_ > result.fitness()) fitness_ = result.fitness();
     }
 }
