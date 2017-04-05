@@ -80,12 +80,12 @@ public:
             }
 
             size_t stagnatedVillages = 0;
-			double bestScore = 0.0;
+			Creature bestCreature;
             for(auto& village: villages){
                 double nearBest = -1.0;
                 if(village.size() > 0) {
 					village.sort();
-					if (village[0].fitness() > bestScore) bestScore = village[0].fitness();
+					if (village[0].fitness() > bestCreature.fitness()) bestCreature = village[0];
 					nearBest = village[std::min(villageSize / 2, village.size() - 1)].fitness();
 					if (outputLevel > 86) {
 						std::cout << "village\n\tnear-best = " << nearBest;
@@ -120,7 +120,8 @@ public:
 				village.prevFitness = std::max(village.prevFitness, nearBest);
             }
 			if (outputLevel > 80) {
-				std::cout << " bestScore = " << bestScore << std::endl;
+				std::cout << " bestScore = " << bestCreature.fitness() << std::endl;
+				std::cout << " source = " << bestCreature.source << std::endl;
 			}
 			if (outputLevel > 85) {
 				std::cout << __FUNCTION__ << " stagnatedVillages = " << stagnatedVillages << std::endl;

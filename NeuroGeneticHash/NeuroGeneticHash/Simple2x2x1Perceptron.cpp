@@ -13,6 +13,7 @@ Simple2x2x1Perceptron::Simple2x2x1Perceptron()
 	}
 
 	calcFitness();
+	source = 0;
 }
 
 
@@ -29,6 +30,7 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::cross(const Simple2x2x1Perceptron &
 	}
 
 	ret.calcFitness();
+	ret.source = 1;
 	return ret;
 }
 
@@ -68,5 +70,6 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::mutate() const
 	ret.weights[hrand() % weights.size()] += distribution(generator);
 	
 	ret.calcFitness();
+	ret.source = 2;
 	return ret;
 }

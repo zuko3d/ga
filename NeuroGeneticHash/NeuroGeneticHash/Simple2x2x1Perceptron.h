@@ -36,6 +36,8 @@ public:
 	bool operator<(const Simple2x2x1Perceptron& op) const {
 		return fitness_ > op.fitness_;
 	}
+
+	int source = -1;
 protected:
 
 	static std::vector<std::vector<double> > trainData;
@@ -46,5 +48,6 @@ protected:
 	double costFunction(double x);
 
 	std::vector<double> weights;
+	
 };
 
