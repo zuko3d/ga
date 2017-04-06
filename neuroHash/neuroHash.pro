@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += console c++14
 CONFIG -= app_bundle
-CONFIG -= qt
+CONFIG += qt
 
 LIBS += -lpthread
 
@@ -14,7 +14,8 @@ LIBS += -lpthread
 SOURCES += main.cpp \
     src/evolution/testphenotype.cpp \
     src/evolution/testphenotypediofant.cpp \
-    src/evolution/trainerphenotype.cpp
+    src/evolution/trainerphenotype.cpp \
+    ../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.cpp
 
 HEADERS += \
     src/evolution/phenotype.h \
@@ -23,4 +24,5 @@ HEADERS += \
     src/evolution/village.h \
     src/evolution/testphenotype.h \
     src/evolution/testphenotypediofant.h \
-    src/evolution/trainerphenotype.h
+    src/evolution/trainerphenotype.h \
+    ../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h

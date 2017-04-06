@@ -17,8 +17,8 @@ inline double hRnd() // random double [0 ... 1]
 
 inline unsigned int hrand(void)
 {
-	static thread_local std::mt19937 generator;
-	std::uniform_int_distribution<unsigned int> distribution(0, INT_MAX);
+    static std::mt19937 generator;
+    std::uniform_int_distribution<unsigned int> distribution(0, INT32_MAX);
 	return distribution(generator);	
 	/*
 	static thread_local uint64_t __s__[2];
