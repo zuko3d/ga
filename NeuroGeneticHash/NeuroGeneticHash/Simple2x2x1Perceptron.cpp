@@ -1,6 +1,10 @@
 #include "Simple2x2x1Perceptron.h"
 #include <QDebug>
-std::vector<std::vector<double> > Simple2x2x1Perceptron::trainData = { {0,0,0}, {0,1,1}, {1, 0, 1}, {1, 1, 0} };
+std::vector<std::vector<double> > Simple2x2x1Perceptron::trainData = {
+    {0, 0, 0},
+    {0, 1, 1},
+    {1, 0, 1},
+    {1, 1, 0} };
 
 Simple2x2x1Perceptron::Simple2x2x1Perceptron()
 {
@@ -67,7 +71,19 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::cross(const Simple2x2x1Perceptron &
 
 	ret.calcFitness();
 	ret.source = 1;
-	return ret;
+    return ret;
+}
+
+void Simple2x2x1Perceptron::simulate()
+{
+    qDebug() << "Simulation: ";
+    for (auto& data : trainData) {
+        double n1 = costFunction(data[0] * weights[0] + data[1] * weights[2]);
+        double n2 = costFunction(data[0] * weights[1] + data[1] * weights[3]);
+        double out = costFunction(n1 * weights[4] + n2 * weights[5]);
+
+        qDebug() << data[0] << " " << data[1] << " " << data[2] << " given " << out;
+    }
 }
 
 void Simple2x2x1Perceptron::calcFitness()

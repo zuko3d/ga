@@ -38,6 +38,8 @@ public:
 	}
 
 	int source = -1;
+
+    void simulate();
 protected:
 
 	static std::vector<std::vector<double> > trainData;

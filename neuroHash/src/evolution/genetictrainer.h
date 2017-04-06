@@ -27,7 +27,8 @@ public:
 		const double stagnationCoef = 1.02,
 		const int innovationsProtectedEpochs = 5,
 		const int outputLevel = 0, // 0 for nothing, 100 for everything
-		const bool threaded = false
+        const bool threaded = false,
+        const double enoughFitness = 1e10
 	) {
 		size_t maxPopulation = villageSize * 4;
         std::vector<Village<Creature> > villages;
@@ -86,7 +87,7 @@ public:
                 if(village.size() > 0) {
 					village.sort();
 					if (village[0].fitness() > bestCreature.fitness()) bestCreature = village[0];
-					nearBest = village[std::min(villageSize / 2, village.size() - 1)].fitness();
+                    nearBest = village[std::min(villageSize, village.size() - 1)].fitness();
 					if (outputLevel > 86) {
 						std::cout << "village\n\tnear-best = " << nearBest;
 						std::cout << "\n\tbest = " << village[0].fitness();
@@ -130,6 +131,12 @@ public:
 				if (outputLevel > 30) {
 					std::cout << "All villages stagnated, exiting\n"; std::cout.flush();
 				}
+                break;
+            }
+            if(bestCreature.fitness() >= enoughFitness) {
+                if (outputLevel > 30) {
+                    std::cout << "Fitness is enough, exiting\n"; std::cout.flush();
+                }
                 break;
             }
         }
