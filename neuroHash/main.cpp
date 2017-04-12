@@ -3,15 +3,14 @@
 #include "src/evolution/testphenotypediofant.h"
 #include "src/evolution/trainerphenotype.h"
 #include "../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h"
-
-#include <QDebug>
+#include "../NeuroGeneticHash/NeuroGeneticHash/MaxEquation.h"
 
 int main()
 {
-    auto best = GeneticTrainer<Simple2x2x1Perceptron>::survivalOfTheFittest(
-                10000, 100000, 4, 10000, 0.75, 0.25, 0.2, 1.0000001, 20, 86, true, 1e4);
+    auto best = GeneticTrainer<MaxEquation>::survivalOfTheFittest(
+                10000, 100000, 4, 10000, 0.5, 0.5, 0.4, 1.0000001, 20, 86, true, 1e5);
 
-    best.simulate();
+    //best.simulate();
 
     std::cout << "Fitness: " << best.fitness() << std::endl;
     std::cout << "Result: " << best.serialize() << std::endl;

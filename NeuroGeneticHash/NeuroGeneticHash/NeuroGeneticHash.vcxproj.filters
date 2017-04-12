@@ -30,6 +30,9 @@
     <ClCompile Include="Simple2x2x1Perceptron.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MaxEquation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\neuroHash\src\global.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Simple2x2x1Perceptron.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

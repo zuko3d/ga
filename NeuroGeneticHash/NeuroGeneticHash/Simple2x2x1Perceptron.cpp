@@ -1,5 +1,5 @@
 #include "Simple2x2x1Perceptron.h"
-#include <QDebug>
+
 std::vector<std::vector<double> > Simple2x2x1Perceptron::trainData = {
     {0, 0, 0},
     {0, 1, 1},
@@ -33,7 +33,7 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::cross(const Simple2x2x1Perceptron &
 		ret.weights[i] = (weights[i] + p1.weights[i] + p2.weights[i]) / 3.0;
 	}
     */
-
+	typedef unsigned char uchar;
     uchar* allele1, *allele2, *allele3, *resultAllele;
     allele1 = reinterpret_cast<uchar*>(const_cast<double*>(weights.data()));
     allele2 = reinterpret_cast<uchar*>(const_cast<double*>(p1.weights.data()));
@@ -76,13 +76,13 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::cross(const Simple2x2x1Perceptron &
 
 void Simple2x2x1Perceptron::simulate()
 {
-    qDebug() << "Simulation: ";
+    std::cout << "Simulation: \n";
     for (auto& data : trainData) {
         double n1 = costFunction(data[0] * weights[0] + data[1] * weights[2]);
         double n2 = costFunction(data[0] * weights[1] + data[1] * weights[3]);
         double out = costFunction(n1 * weights[4] + n2 * weights[5]);
 
-        qDebug() << data[0] << " " << data[1] << " " << data[2] << " given " << out;
+		std::cout << data[0] << " " << data[1] << " " << data[2] << " given " << out << "\n";
     }
 }
 

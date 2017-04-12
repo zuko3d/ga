@@ -125,6 +125,7 @@
     <ClCompile Include="..\..\neuroHash\src\evolution\testphenotype.cpp" />
     <ClCompile Include="..\..\neuroHash\src\evolution\testphenotypediofant.cpp" />
     <ClCompile Include="..\..\neuroHash\src\evolution\trainerphenotype.cpp" />
+    <ClCompile Include="MaxEquation.cpp" />
     <ClCompile Include="Simple2x2x1Perceptron.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +136,7 @@
     <ClInclude Include="..\..\neuroHash\src\evolution\trainerphenotype.h" />
     <ClInclude Include="..\..\neuroHash\src\evolution\village.h" />
     <ClInclude Include="..\..\neuroHash\src\global.h" />
+    <ClInclude Include="MaxEquation.h" />
     <ClInclude Include="Simple2x2x1Perceptron.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
