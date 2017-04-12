@@ -18,26 +18,26 @@
     <ClCompile Include="..\..\neuroHash\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\neuroHash\src\evolution\testphenotype.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\neuroHash\src\evolution\testphenotypediofant.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\neuroHash\src\evolution\trainerphenotype.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Simple2x2x1Perceptron.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MaxEquation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\neuroHash\src\evolution\trainerphenotype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\neuroHash\src\evolution\testphenotypediofant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\neuroHash\src\evolution\testphenotype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PerceptronHasher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\neuroHash\src\global.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\neuroHash\src\evolution\genetictrainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,6 +60,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MaxEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\neuroHash\src\global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PerceptronHasher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
