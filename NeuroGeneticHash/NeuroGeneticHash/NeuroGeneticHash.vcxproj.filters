@@ -36,6 +36,12 @@
     <ClCompile Include="PerceptronHasher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MultilayerPerceptron.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnHasher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\neuroHash\src\evolution\genetictrainer.h">
@@ -66,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PerceptronHasher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultilayerPerceptron.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnnHasher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,10 +5,14 @@
 #include "../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h"
 #include "../NeuroGeneticHash/NeuroGeneticHash/MaxEquation.h"
 #include "../NeuroGeneticHash/NeuroGeneticHash/PerceptronHasher.h"
+
+#include "../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.h"
+#include "../NeuroGeneticHash/NeuroGeneticHash/AnnHasher.h"
+
 int main()
 {
-    auto best = GeneticTrainer<PerceptronHasher>::survivalOfTheFittest(
-                10000, 100000, 4000, 100, 0.25, 0.75, 0.2, 1.0000001, 20, 86, false, 1);
+    auto best = GeneticTrainer<AnnHasher<MultilayerPerceptron> >::survivalOfTheFittest(
+                10000, 100000, 8, 1000, 0.25, 0.15, 0.4, 1.00000000001, 10, 86, true, 1);
 
     //best.simulate();
 
