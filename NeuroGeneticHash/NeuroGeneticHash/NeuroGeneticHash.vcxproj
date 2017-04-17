@@ -126,6 +126,7 @@
     <ClCompile Include="..\..\neuroHash\src\evolution\testphenotypediofant.cpp" />
     <ClCompile Include="..\..\neuroHash\src\evolution\trainerphenotype.cpp" />
     <ClCompile Include="AnnHasher.cpp" />
+    <ClCompile Include="HashTester.cpp" />
     <ClCompile Include="MaxEquation.cpp" />
     <ClCompile Include="MultilayerPerceptron.cpp" />
     <ClCompile Include="PerceptronHasher.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="..\..\neuroHash\src\evolution\village.h" />
     <ClInclude Include="..\..\neuroHash\src\global.h" />
     <ClInclude Include="AnnHasher.h" />
+    <ClInclude Include="HashTester.h" />
     <ClInclude Include="MaxEquation.h" />
     <ClInclude Include="MultilayerPerceptron.h" />
     <ClInclude Include="PerceptronHasher.h" />

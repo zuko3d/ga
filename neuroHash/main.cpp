@@ -12,11 +12,18 @@
 int main()
 {
     auto best = GeneticTrainer<AnnHasher<MultilayerPerceptron> >::survivalOfTheFittest(
-                10000, 100000, 8, 1000, 0.25, 0.15, 0.4, 1.00000000001, 10, 86, true, 1);
+                10000, 10000, 4, 500, 1.0, 0.5, 0.3, 1.0 + 1e-6, 10, 86, true, 1.0);
 
-    //best.simulate();
+	auto hash = best.ann_.getHashFunc();
 
-    std::cout << "Fitness: " << best.fitness() << std::endl;
-    std::cout << "Result: " << best.serialize() << std::endl;
+	std::cout << "Result: " << best.serialize() << std::endl;
+
+	std::cout << "Fitness: " << best.fitness() << std::endl;
+	std::cout << "Collisions: " << HashTester::collisionTester(hash, 0xFFFFFF) << "\n";
+	
+	for (int i = 2; i < 19; i++) {
+		std::cout << "Avalanche " << i << ": " << HashTester::avalancheTester(hash, 1 << i) << "\n";
+	}
+		
     return 0;
 }

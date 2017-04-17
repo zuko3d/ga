@@ -15,7 +15,7 @@ inline double hRnd() // random double [0 ... 1]
     return 2.3283064365386962890625e-10 * (double) ((m_z << 16) + m_w);
 }
 
-inline unsigned int hrand(void)
+inline uint32_t hrand(void)
 {
     static std::mt19937 generator;
     std::uniform_int_distribution<uint32_t> distribution(0, UINT32_MAX);

@@ -2,6 +2,7 @@
 
 #include "../../neuroHash/src/global.h"
 #include <unordered_set>
+#include "HashTester.h"
 
 template<class Ann> class AnnHasher
 {
@@ -35,7 +36,7 @@ public:
 
 	int source = -1;
 
-protected:
+//protected:
 	void calcFitness();
 	double fitness_;
 
@@ -45,7 +46,7 @@ protected:
 #include "MultilayerPerceptron.h"
 
 template<class Ann>
-AnnHasher<Ann>::AnnHasher() : ann_({1,4,5,4,4,3,1 })
+AnnHasher<Ann>::AnnHasher() : ann_({ 1, 2, 4, 8, 12, 16 })
 {
 	calcFitness();
 	source = 0;
@@ -111,43 +112,11 @@ AnnHasher<Ann> AnnHasher<Ann>::cross(const AnnHasher<Ann> & p1, const AnnHasher<
 template<class Ann>
 void AnnHasher<Ann>::calcFitness()
 {
-	int tests = 100;
-	int localtests = 2;
+	std::function<std::string(uint32_t)> annHash = std::bind(&Ann::calcOutSingle, ann_, placeholders::_1 );
 
-	const auto bitsize = sizeof(ann_.barriers_[0][0]) * 8;
-	uint32_t totalErr = 0;
-	/*
-	for (int test = 0; test < tests; test++) {
-		uint32_t in = hrand();
-		std::vector<uint32_t> out;
-		out.resize(localtests);
-		for (auto& n : out) {
-			auto tmpIn = in ^ (1 << (rand() % bitsize));
-			n = ann_.calcOut({ tmpIn });
-		}
-
-		out.push_back(ann_.calcOut({ in }));
-		for(int i = 0; i < out.size(); i++){
-			for(int j = i + 1; j < out.size(); j++) {
-				auto fit = __popcnt(out[i] ^ out[j]);
-
-				if (fit > bitsize / 2) {
-					fit -= bitsize / 2;
-				}
-				else {
-					fit = bitsize / 2 - fit;
-				}
-				totalErr += fit;
-			}
-		}
-	}
-	*/
-	const uint32_t collTests = 1000;
-	std::unordered_set<uint32_t> hashes;
-	for (uint32_t i = 0; i < collTests; i++) {
-		hashes.insert(ann_.calcOut({ i }));
-	}
-
-	fitness_ = 1.0 / (1.0 + totalErr) / (1.0 + collTests - hashes.size());
+	auto avalancheResult = HashTester::avalancheTester(annHash, 100);
+	auto collisions = HashTester::collisionTester(annHash, 0xF);
+	
+	fitness_ = 1.0 / (1.0 + avalancheResult) / (1.0 + collisions);
 }
 

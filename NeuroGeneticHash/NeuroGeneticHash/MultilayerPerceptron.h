@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <functional>
 
 class MultilayerPerceptron
 {
@@ -10,7 +11,12 @@ public:
 	MultilayerPerceptron(std::vector<size_t> layers);
 	~MultilayerPerceptron();
 
-	uint32_t calcOut(const std::vector<uint32_t> input) const;
+	std::string calcOut(const std::vector<uint32_t>& input);
+	std::string calcOutSingle(uint32_t input) {
+		return calcOut({ input });
+	}
+
+	std::function<std::string(uint32_t)> getHashFunc();
 
 	std::string serialize() const;
 
