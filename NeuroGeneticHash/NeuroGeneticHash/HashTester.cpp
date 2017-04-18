@@ -5,9 +5,9 @@
 
 using namespace std;
 
-double HashTester::collisionTester(function<string(uint32_t)> hash, uint64_t tests)
+double HashTester::collisionTester(function<string(uint32_t)> hash, uint64_t tests, uint64_t bitMask)
 {
-	const uint64_t bitMask = tests * (tests + 2);
+	if(bitMask == 0) bitMask = tests * (tests + 2);
 	
 	std::unordered_set<uint64_t> hashes;
 	for (uint32_t i = 0; i < tests; i++) {
@@ -67,4 +67,19 @@ double HashTester::avalancheTester(function<string(uint32_t)> hash, int tests)
 	}
 
 	return ((double) totalErr) / ((double)totalTests);
+}
+
+void HashTester::overallTest(function<string(uint32_t)> hash)
+{
+	std::cout << "Collisions 4/4: " << HashTester::collisionTester(hash, 0xFFFF, 0xFFFFULL) << "\n";
+	std::cout << "Collisions 3/5: " << HashTester::collisionTester(hash, 0xFFF, 0xFFFFFULL) << "\n";
+	std::cout << "Collisions 4/5: " << HashTester::collisionTester(hash, 0xFFFF, 0xFFFFFULL) << "\n";
+	std::cout << "Collisions 5/5: " << HashTester::collisionTester(hash, 0xFFFFF, 0xFFFFFULL) << "\n";
+	std::cout << "Collisions 4/8: " << HashTester::collisionTester(hash, 0xFFFF, 0xFFFFFFFFULL) << "\n";
+	std::cout << "Collisions 5/8: " << HashTester::collisionTester(hash, 0xFFFFF, 0xFFFFFFFFULL) << "\n";
+	std::cout << "Collisions 6/8: " << HashTester::collisionTester(hash, 0xFFFFFF, 0xFFFFFFFFULL) << "\n";
+
+	for (int i = 2; i < 19; i++) {
+		std::cout << "Avalanche " << i << ": " << HashTester::avalancheTester(hash, 1 << i) << "\n";
+	}
 }

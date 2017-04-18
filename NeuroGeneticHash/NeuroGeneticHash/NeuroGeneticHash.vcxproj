@@ -121,6 +121,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\blake\blake2b.c" />
+    <ClCompile Include="..\..\blake\blake2bp.c" />
     <ClCompile Include="..\..\neuroHash\main.cpp" />
     <ClCompile Include="..\..\neuroHash\src\evolution\testphenotype.cpp" />
     <ClCompile Include="..\..\neuroHash\src\evolution\testphenotypediofant.cpp" />

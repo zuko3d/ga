@@ -9,21 +9,26 @@
 #include "../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.h"
 #include "../NeuroGeneticHash/NeuroGeneticHash/AnnHasher.h"
 
+#include "../blake/blake2.h"
+
+std::string blake512(uint32_t in) {
+	std::string ret;
+	ret.resize(64);
+
+	blake2b(&ret[0], 64, &in, sizeof(in), "key", 3);
+
+	return ret;
+}
+
 int main()
 {
     auto best = GeneticTrainer<AnnHasher<MultilayerPerceptron> >::survivalOfTheFittest(
-                10000, 10000, 4, 500, 1.0, 0.5, 0.3, 1.0 + 1e-6, 10, 86, true, 1.0);
+                10000, 100000, 4, 500, 1.0, 0.5, 0.15, 1.0 + 1e-15, 10, 86, true, 1.0);
 
-	auto hash = best.ann_.getHashFunc();
-
-	std::cout << "Result: " << best.serialize() << std::endl;
+	//std::cout << "Result: " << best.serialize() << std::endl;
 
 	std::cout << "Fitness: " << best.fitness() << std::endl;
-	std::cout << "Collisions: " << HashTester::collisionTester(hash, 0xFFFFFF) << "\n";
-	
-	for (int i = 2; i < 19; i++) {
-		std::cout << "Avalanche " << i << ": " << HashTester::avalancheTester(hash, 1 << i) << "\n";
-	}
-		
+
+	HashTester::overallTest(best.ann_.getHashFunc());
     return 0;
 }
