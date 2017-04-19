@@ -22,8 +22,11 @@ std::string blake512(uint32_t in) {
 
 int main()
 {
+//    HashTester::overallTest(blake512);
+//    return 0;
+
     auto best = GeneticTrainer<AnnHasher<MultilayerPerceptron> >::survivalOfTheFittest(
-                10000, 100000, 4, 500, 1.0, 0.5, 0.15, 1.0 + 1e-15, 10, 86, true, 1.0);
+                10000, 100000, 800, 10, 0.5, 0.5, 0.1, 1.0 + 1e-15, 10, 86, false, 1.0);
 
 	//std::cout << "Result: " << best.serialize() << std::endl;
 

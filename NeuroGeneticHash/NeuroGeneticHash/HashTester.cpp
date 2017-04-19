@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <unordered_set>
+#include <chrono>
 
 using namespace std;
 
@@ -49,7 +50,8 @@ double HashTester::avalancheTester(function<string(uint32_t)> hash, int tests)
 //std::cout << "\n";
 //std::cout << std::hex << *op2 << "\n";
 				for (int k = 0; k < (bitsize >> 6); k++) {
-					fit += __popcnt64((*op1) ^ (*op2));
+                    //fit += __popcnt64((*op1) ^ (*op2));
+                    fit += __builtin_popcountll((*op1) ^ (*op2));
 					op1++;
 					op2++;
 				}
@@ -66,20 +68,40 @@ double HashTester::avalancheTester(function<string(uint32_t)> hash, int tests)
 		}
 	}
 
-	return ((double) totalErr) / ((double)totalTests);
+    return ((double) totalErr) / ((double)totalTests);
+}
+
+double HashTester::speedTest(function<string (uint32_t)> hash, uint32_t tests)
+{
+    char notOptimizeOut = ' ';
+
+    auto ts = std::chrono::high_resolution_clock::now();
+
+    for(uint32_t i = 0;i < tests; i++){
+        notOptimizeOut ^= hash(i)[0];
+    }
+
+    double time = ((double) std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - ts).count()) / ((double) tests);
+    std::cout << "Time: " << time << " ns / hash\n";
+
+    std::cout << "notOptimizeOut = " << notOptimizeOut << std::endl;
+    return time;
 }
 
 void HashTester::overallTest(function<string(uint32_t)> hash)
 {
+    std::cout << "Collisions 3/3: " << HashTester::collisionTester(hash, 0xFFF, 0xFFFULL) << "\n";
 	std::cout << "Collisions 4/4: " << HashTester::collisionTester(hash, 0xFFFF, 0xFFFFULL) << "\n";
 	std::cout << "Collisions 3/5: " << HashTester::collisionTester(hash, 0xFFF, 0xFFFFFULL) << "\n";
 	std::cout << "Collisions 4/5: " << HashTester::collisionTester(hash, 0xFFFF, 0xFFFFFULL) << "\n";
 	std::cout << "Collisions 5/5: " << HashTester::collisionTester(hash, 0xFFFFF, 0xFFFFFULL) << "\n";
 	std::cout << "Collisions 4/8: " << HashTester::collisionTester(hash, 0xFFFF, 0xFFFFFFFFULL) << "\n";
 	std::cout << "Collisions 5/8: " << HashTester::collisionTester(hash, 0xFFFFF, 0xFFFFFFFFULL) << "\n";
-	std::cout << "Collisions 6/8: " << HashTester::collisionTester(hash, 0xFFFFFF, 0xFFFFFFFFULL) << "\n";
+    //std::cout << "Collisions 6/8: " << HashTester::collisionTester(hash, 0xFFFFFF, 0xFFFFFFFFULL) << "\n";
 
 	for (int i = 2; i < 19; i++) {
 		std::cout << "Avalanche " << i << ": " << HashTester::avalancheTester(hash, 1 << i) << "\n";
 	}
+
+    speedTest(hash);
 }

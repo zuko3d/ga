@@ -15,7 +15,11 @@ SOURCES += main.cpp \
     src/evolution/testphenotype.cpp \
     src/evolution/testphenotypediofant.cpp \
     src/evolution/trainerphenotype.cpp \
-    ../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.cpp
+    ../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.cpp \
+    ../blake/blake2b.c \
+    ../blake/blake2bp.c \
+    ../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.cpp \
+    ../NeuroGeneticHash/NeuroGeneticHash/HashTester.cpp
 
 HEADERS += \
     src/evolution/phenotype.h \
@@ -25,4 +29,12 @@ HEADERS += \
     src/evolution/testphenotype.h \
     src/evolution/testphenotypediofant.h \
     src/evolution/trainerphenotype.h \
-    ../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h
+    ../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h \
+    ../blake/blake2.h \
+    ../blake/blake2b-load-sse2.h \
+    ../blake/blake2b-load-sse41.h \
+    ../blake/blake2b-round.h \
+    ../blake/blake2-config.h \
+    ../blake/blake2-impl.h \
+    ../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.h \
+    ../NeuroGeneticHash/NeuroGeneticHash/HashTester.h

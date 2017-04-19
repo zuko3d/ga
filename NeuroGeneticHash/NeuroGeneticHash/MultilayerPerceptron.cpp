@@ -1,6 +1,7 @@
 #include "MultilayerPerceptron.h"
 
 #include "../../neuroHash/src/global.h"
+#include <cstring>
 
 MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 {
