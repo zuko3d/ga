@@ -81,6 +81,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,6 +129,7 @@
     <ClCompile Include="..\..\neuroHash\src\evolution\testphenotypediofant.cpp" />
     <ClCompile Include="..\..\neuroHash\src\evolution\trainerphenotype.cpp" />
     <ClCompile Include="AnnHasher.cpp" />
+    <ClCompile Include="CohonenNetwork.cpp" />
     <ClCompile Include="HashTester.cpp" />
     <ClCompile Include="MaxEquation.cpp" />
     <ClCompile Include="MultilayerPerceptron.cpp" />
@@ -143,6 +145,7 @@
     <ClInclude Include="..\..\neuroHash\src\evolution\village.h" />
     <ClInclude Include="..\..\neuroHash\src\global.h" />
     <ClInclude Include="AnnHasher.h" />
+    <ClInclude Include="CohonenNetwork.h" />
     <ClInclude Include="HashTester.h" />
     <ClInclude Include="MaxEquation.h" />
     <ClInclude Include="MultilayerPerceptron.h" />

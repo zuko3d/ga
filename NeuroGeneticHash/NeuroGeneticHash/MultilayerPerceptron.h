@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../neuroHash/src/global.h"
+
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -9,14 +11,21 @@ class MultilayerPerceptron
 {
 public:
 	MultilayerPerceptron(std::vector<size_t> layers);
+	MultilayerPerceptron(
+		std::vector< std::vector<std::vector<uint32_t> > > _weights,
+		std::vector< std::vector<uint32_t> > _barriers
+	);
 	~MultilayerPerceptron();
 
 	std::string calcOut(const std::vector<uint32_t>& input);
-	std::string calcOutSingle(uint32_t input) {
-		return calcOut({ input });
+	std::string calcOutSingle(uint32_t* input, size_t size) {
+		std::vector<uint32_t> v;
+		v.resize(size);
+		memcpy(&v[0], input, sizeof(uint32_t) * size);
+		return calcOut(v);
 	}
 
-	std::function<std::string(uint32_t)> getHashFunc();
+	hashFunc_t getHashFunc();
 
 	std::string serialize() const;
 

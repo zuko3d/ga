@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\blake\blake2bp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CohonenNetwork.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\neuroHash\src\evolution\genetictrainer.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HashTester.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CohonenNetwork.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -46,7 +46,7 @@ public:
 #include "MultilayerPerceptron.h"
 
 template<class Ann>
-AnnHasher<Ann>::AnnHasher() : ann_({ 1, 8, 4, 16 })
+AnnHasher<Ann>::AnnHasher() : ann_({ 4, 2, 2 })
 {
 	calcFitness();
 	source = 0;
@@ -112,13 +112,17 @@ AnnHasher<Ann> AnnHasher<Ann>::cross(const AnnHasher<Ann> & p1, const AnnHasher<
 template<class Ann>
 void AnnHasher<Ann>::calcFitness()
 {
-	std::function<std::string(uint32_t)> annHash = std::bind(&Ann::calcOutSingle, ann_, placeholders::_1 );
+	auto annHash = ann_.getHashFunc();
 
 	auto avalancheResult = HashTester::avalancheTester(annHash, 10);
 	//auto avalancheResult = 0.0;
 
 	auto collisions = HashTester::collisionTester(annHash, 0x3FF, 0x3FF);
+	collisions += HashTester::collisionTester(annHash, 0xF, 0xF);
+	collisions += HashTester::collisionTester(annHash, 0x3F, 0x3F);
+	collisions += HashTester::collisionTester(annHash, 0xFFF, 0xFFF);
+	//collisions += HashTester::collisionTester(annHash, 0xFFFF, 0xFFFF);
 	
-	fitness_ = 1.0 / (1.0 + avalancheResult / 100.0) / (1.0 + collisions);
+	fitness_ = 1.0 / (1.0 + avalancheResult / 10.0) / (1.0 + collisions);
 }
 

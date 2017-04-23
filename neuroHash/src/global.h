@@ -6,6 +6,27 @@
 #include <cassert>
 #include <string>
 #include <random>
+#include <functional>
+
+typedef std::function<std::string(uint32_t*, size_t size)> hashFunc_t;
+
+
+inline std::string toHex(std::string str) {
+	static char hex[] = "0123456879ABCDEF";
+	std::string ret = "0x";
+
+	for (auto& c : str) {
+		unsigned char uc = static_cast<unsigned char>(c);
+		ret += hex[uc / 16];
+		ret += hex[uc % 16];
+	}
+
+	return ret;
+}
+
+#ifdef _MSC_VER 
+#define __builtin_popcountll __popcnt64
+#endif
 
 inline double hRnd() // random double [0 ... 1]
 {
