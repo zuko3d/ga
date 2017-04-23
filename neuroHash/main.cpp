@@ -68,6 +68,5 @@ int main()
 	std::cout << toHex(hasher((uint32_t*) text, 4)) << std::endl;
 
 	HashTester::collisionFinder(hasher);
-
     return 0;
 }
