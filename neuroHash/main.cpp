@@ -54,19 +54,20 @@ int main()
 
 	//std::cout << "Fitness: " << best.fitness() << std::endl;
 
-	HashTester::overallTest(best.getHashFunc());
+	//HashTester::overallTest(best.getHashFunc());
 
 	auto hasher = best.getHashFunc();
 
 	uint32_t in[] = { 143223, 1, 0x12345678, 9821376 };
-	std::cout << toHex(hasher(in, 4)) << std::endl;
+	std::cout << "in1: " << toHex(hasher(in, 4)) << std::endl;
 
 	uint32_t in2[] = { 0x12345678, 0x90ABCDEF, 0x12345678, 0x90ABCDEF };
-	std::cout << toHex(hasher(in2, 4)) << std::endl;
+	std::cout << "in2: " << toHex(hasher(in2, 4)) << std::endl;
 
 	char text[] = ">> NeuroHash! <<";
 	std::cout << toHex(hasher((uint32_t*) text, 4)) << std::endl;
 
-	HashTester::collisionFinder(hasher);
+	//HashTester::collisionFinder(hasher);
+	system("pause");
     return 0;
 }

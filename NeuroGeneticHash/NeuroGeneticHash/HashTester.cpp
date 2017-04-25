@@ -22,7 +22,7 @@ double HashTester::collisionTester(hashFunc_t hash, uint64_t tests, uint64_t bit
 	return ((double)tests - (double)hashes.size()) / ((double)tests);
 }
 
-double HashTester::collisionFinder(hashFunc_t hash)
+void HashTester::collisionFinder(hashFunc_t hash)
 {
 	std::unordered_map<std::string, uint64_t> hashes;
 

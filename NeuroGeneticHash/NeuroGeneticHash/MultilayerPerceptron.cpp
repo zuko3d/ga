@@ -60,10 +60,11 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
 	current = input;
 
 	for (int i = 0; i < weights_.size(); i++) {
+		next.clear();
 		next.resize(barriers_[i + 1].size(), 0);
 		for (int j = 0; j < weights_[i].size(); j++){
 			for (int k = 0; k < weights_[i][j].size(); k++) {
-				next[k] += current[j] * weights_[i][j][k];
+				next[k] += static_cast<uint64_t>(current[j]) * weights_[i][j][k];
 			}
 		}
 
@@ -77,7 +78,7 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
 	std::string ret;
 	ret.resize(current.size() * sizeof(current[0]));
 	for (int i = 0; i < current.size(); i++) {
-		current[i] = static_cast<uint32_t>(current[i] & 0xFFFFFFFF);
+		current[i] = _byteswap_ulong(current[i]);
 	}
 	memcpy(&ret[0], &current[0], ret.size());
 	//return static_cast<uint32_t>(ret & UINT32_MAX);
@@ -147,7 +148,7 @@ uint32_t MultilayerPerceptron::barrierFunction(uint64_t sum, uint32_t barrier) c
 	//ret %= barrier;
 	//ret *= sum;
 
-	uint64_t ret = sum + 2;
-	ret *= sum + 3;
+	uint64_t ret = (sum + 2) % barrier;
+	ret *= (sum + 3) % barrier;
 	return ret % barrier;
 }
