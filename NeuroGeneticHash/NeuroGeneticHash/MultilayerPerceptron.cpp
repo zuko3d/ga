@@ -30,7 +30,7 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 MultilayerPerceptron::MultilayerPerceptron(std::vector<std::vector<std::vector<uint32_t>>> _weights, std::vector<std::vector<uint32_t>> _barriers) :
 	weights_(_weights), barriers_(_barriers)
 {
-	
+
 }
 
 
@@ -44,7 +44,7 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
 	std::vector<uint64_t> next;
 	auto input = _input;
 
-	
+
 	while (input.size() < barriers_[0].size()) {
 		input.push_back(0);
 	}
@@ -53,17 +53,18 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
 	current.resize(input.size());
 	auto& barrier = barriers_[0];
 	for (int j = 0; j < barrier.size(); j++) {
-		current[j] = barrierFunction(input[j], barrier[j]);
+	current[j] = barrierFunction(input[j], barrier[j]);
 	}
 	*/
 
 	current = input;
 
 	for (int i = 0; i < weights_.size(); i++) {
+		next.clear();
 		next.resize(barriers_[i + 1].size(), 0);
-		for (int j = 0; j < weights_[i].size(); j++){
+		for (int j = 0; j < weights_[i].size(); j++) {
 			for (int k = 0; k < weights_[i][j].size(); k++) {
-				next[k] += current[j] * weights_[i][j][k];
+				next[k] += static_cast<uint64_t>(current[j]) * weights_[i][j][k];
 			}
 		}
 
@@ -77,7 +78,7 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
 	std::string ret;
 	ret.resize(current.size() * sizeof(current[0]));
 	for (int i = 0; i < current.size(); i++) {
-		current[i] = static_cast<uint32_t>(current[i] & 0xFFFFFFFF);
+		current[i] = _byteswap_ulong(current[i]);
 	}
 	memcpy(&ret[0], &current[0], ret.size());
 	//return static_cast<uint32_t>(ret & UINT32_MAX);
@@ -95,10 +96,10 @@ std::string MultilayerPerceptron::serialize() const
 
 	//std::string ret = "barriers:\n";
 	ss << "barriers:\n{\n";
-	for(int j = 0; j < barriers_.size(); j++) {
+	for (int j = 0; j < barriers_.size(); j++) {
 		auto& layer = barriers_[j];
 		ss << "{ ";
-		for(int i = 0; i < layer.size(); i++) {
+		for (int i = 0; i < layer.size(); i++) {
 			//ret += std::to_string(b) + " ";
 			if (i != 0) ss << ", ";
 			ss << "0x" << std::hex << std::uppercase << layer[i];
@@ -110,13 +111,13 @@ std::string MultilayerPerceptron::serialize() const
 	}
 	//ret += "weights:\n";
 	ss << "}\nweights:\n{\n";
-	for(int k = 0; k < weights_.size(); k++) {
+	for (int k = 0; k < weights_.size(); k++) {
 		auto& layer = weights_[k];
 		ss << "{ \n";
-		for(int j = 0; j < layer.size(); j++) {
+		for (int j = 0; j < layer.size(); j++) {
 			auto& neuron = layer[j];
 			ss << "{ ";
-			for(int i = 0; i < neuron.size(); i++) {
+			for (int i = 0; i < neuron.size(); i++) {
 				//ret += std::to_string(w) + " ";
 				if (i != 0) ss << ", ";
 				ss << "0x" << std::hex << std::uppercase << neuron[i];
@@ -147,7 +148,7 @@ uint32_t MultilayerPerceptron::barrierFunction(uint64_t sum, uint32_t barrier) c
 	//ret %= barrier;
 	//ret *= sum;
 
-	uint64_t ret = sum + 2;
-	ret *= sum + 3;
+	uint64_t ret = (sum + 2) % barrier;
+	ret *= (sum + 3) % barrier;
 	return ret % barrier;
 }
