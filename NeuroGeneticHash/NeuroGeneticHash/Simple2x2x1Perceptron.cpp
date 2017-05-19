@@ -41,7 +41,7 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::cross(const Simple2x2x1Perceptron &
 
     resultAllele = reinterpret_cast<uchar*>(const_cast<double*>(ret.weights.data()));
 
-    for (int i = 0; i < weights.size() * sizeof(double) / sizeof(uchar); i++) {
+    for (size_t i = 0; i < weights.size() * sizeof(double) / sizeof(uchar); i++) {
 //        qDebug() << QString::number( *allele1, 2 );
 //        qDebug() << QString::number( *allele2, 2 );
 //        qDebug() << QString::number( *allele3, 2 );

@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <cstring>
 #include <functional>
 
 class MultilayerPerceptron
@@ -21,7 +22,7 @@ public:
 	std::string calcOutSingle(uint32_t* input, size_t size) {
 		std::vector<uint32_t> v;
 		v.resize(size);
-		memcpy(&v[0], input, sizeof(uint32_t) * size);
+        std::memcpy(&v[0], input, sizeof(uint32_t) * size);
 		return calcOut(v);
 	}
 
@@ -34,4 +35,6 @@ public:
 
 	std::vector< std::vector<std::vector<uint32_t> > > weights_;
 	std::vector< std::vector<uint32_t> > barriers_;
+
+    uint32_t order_ = 0x7FFF;
 };

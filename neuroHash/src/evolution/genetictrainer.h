@@ -12,6 +12,10 @@
 #include <vector>
 #include <cmath>
 
+#include <omp.h>
+
+#include "globalstatistics.h"
+
 template <class Creature>
 class GeneticTrainer
 {
@@ -34,7 +38,7 @@ public:
         std::vector<Village<Creature> > villages;
         villages.resize((size_t)nVillages);
 
-		if (outputLevel > 20) {
+        if (outputLevel > 30) {
 			std::cout << __FUNCTION__ << " Generating initial population..." << std::endl;
 		}
 		auto ts = std::chrono::system_clock::now();
@@ -43,7 +47,7 @@ public:
             village.resize(villageSize);
         }
 
-		if (outputLevel > 20) {
+        if (outputLevel > 31) {
 			std::cout << " Generation took " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - ts).count()  << " msec" << std::endl;
 		}
 
@@ -67,15 +71,22 @@ public:
             }
 
             std::vector<std::thread> threads;
+
+#pragma omp parallel for
+            for(size_t i = 0; i < villages.size(); i++) {
+                handleVillage(villages[i], mutaFactor, crossFactor, topX, maxPopulation);
+            }
+
+/*
             for(auto& village: villages){
 				if (threaded) {
 					threads.push_back(std::thread(handleVillage, std::ref(village), mutaFactor, crossFactor, topX, maxPopulation));
 				}
-				else {
-					handleVillage(village, mutaFactor, crossFactor, topX, maxPopulation);
-				}
+                else {
+                    handleVillage(village, mutaFactor, crossFactor, topX, maxPopulation);
+                }
             }
-
+*/
             for(auto& _thread: threads){
                 _thread.join();
             }
@@ -123,10 +134,14 @@ public:
 			if (outputLevel > 80) {
 				std::cout << " bestScore = " << bestCreature.fitness() << std::endl;
 				std::cout << " source = " << bestCreature.source << std::endl;
+
+                std::cout << "Cross:  " << static_cast<double>(GlobalStatistics::positiveCross) / GlobalStatistics::totalCross << " / " << GlobalStatistics::totalCross << std::endl;
+                std::cout << "Mutate: " << static_cast<double>(GlobalStatistics::positiveMutations) / GlobalStatistics::totalMutations << " / " << GlobalStatistics::totalMutations << std::endl;
 			}
 			if (outputLevel > 85) {
 				std::cout << __FUNCTION__ << " stagnatedVillages = " << stagnatedVillages << std::endl;
 			}
+            stagnatedVillages = 0;
             if(stagnatedVillages >= nVillages) {
 				if (outputLevel > 30) {
 					std::cout << "All villages stagnated, exiting\n"; std::cout.flush();
@@ -157,9 +172,12 @@ public:
 
 		if (outputLevel > 20) {
 			std::cout << "Time for training: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count() << " msec\n";
-			std::cout << "Total epochs done: " << epoch << std::endl;
-			std::cout << "Best creature: " << best.serialize() << std::endl;
+            //std::cout << "Total epochs done: " << epoch << std::endl;
+            //std::cout << "Best creature: " << best.serialize() << std::endl;
 			std::cout << "Fintess: " << best.fitness() << std::endl;
+
+            std::cout << "Cross: " << static_cast<double>(GlobalStatistics::positiveCross) / GlobalStatistics::totalCross << " / " << GlobalStatistics::totalCross << std::endl;
+            std::cout << "Mutate: " << static_cast<double>(GlobalStatistics::positiveMutations) / GlobalStatistics::totalMutations << " / " << GlobalStatistics::totalMutations << std::endl;
 		}
 
         return best;
@@ -194,6 +212,19 @@ void GeneticTrainer<Creature>::handleVillage(Village<Creature> &village, double 
 
     village.reserve(((size_t) (((double) village.size()) * (1.1 + mutationFactor + crossFactor))));
 
+    size_t newSize = std::max(maxPopulation / 4, village.size() * 2);
+
+    while(village.size() < newSize) {
+        int i = hrand() % village.size();
+        if(hRnd() < mutationFactor){
+            village.push_back(village[i].mutate());
+        }
+
+        if(hRnd() < crossFactor) {
+            village.push_back(village[i].cross(village[hrand() % (village.size())], village[hrand() % (village.size())]));
+        }
+    }
+    /*
     auto initialSize = village.size();
     for(size_t i = 0; i < initialSize; i++){
         if(hRnd() < mutationFactor){
@@ -204,6 +235,7 @@ void GeneticTrainer<Creature>::handleVillage(Village<Creature> &village, double 
             village.push_back(village[i].cross(village[hrand() % initialSize], village[hrand() % initialSize]));
         }
     }
+    */
 }
 
 #endif // GENETICTRAINER_H

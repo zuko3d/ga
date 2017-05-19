@@ -1,27 +1,36 @@
 #include "MultilayerPerceptron.h"
 
 #include "../../neuroHash/src/global.h"
+#include "globalstatistics.h"
+
 #include <cstring>
 #include <sstream>
+
 
 MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 {
 	barriers_.resize(layers.size());
 
-	for (int i = 0; i < layers.size(); i++) {
+    GlobalStatistics::primes_.resize(order_);
+
+    for (size_t i = 0; i < layers.size(); i++) {
 		barriers_[i].resize(layers[i]);
 		for (auto& b : barriers_[i]) {
-			b = 1 + hrand();
+            b = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
 		}
 	}
+    for(auto& b : barriers_.back()){
+        b = 0xFFFFFFFF - 4; // the nearest prime number to MAX_UINT32
+    }
 
 	weights_.resize(barriers_.size() - 1);
-	for (int i = 0; i < weights_.size(); i++) {
+    for (size_t i = 0; i < weights_.size(); i++) {
 		weights_[i].resize(barriers_[i].size());
 		for (auto& w : weights_[i]) {
 			w.resize(barriers_[i + 1].size());
 			for (auto& weight : w) {
-				weight = hrand();
+                //weight = hrand() & order_;
+                weight = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
 			}
 		}
 	}
@@ -59,27 +68,30 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
 
 	current = input;
 
-	for (int i = 0; i < weights_.size(); i++) {
+    for (size_t i = 0; i < weights_.size(); i++) {
 		next.clear();
 		next.resize(barriers_[i + 1].size(), 0);
-		for (int j = 0; j < weights_[i].size(); j++) {
-			for (int k = 0; k < weights_[i][j].size(); k++) {
-				next[k] += static_cast<uint64_t>(current[j]) * weights_[i][j][k];
+        for (size_t j = 0; j < weights_[i].size(); j++) {
+            for (size_t k = 0; k < weights_[i][j].size(); k++) {
+                next[k] += static_cast<uint64_t>(current[j]) * static_cast<uint64_t>(weights_[i][j][k]);
 			}
 		}
 
 		current.resize(next.size());
 		auto& barrier = barriers_[i + 1];
-		for (int j = 0; j < barrier.size(); j++) {
+        for (size_t j = 0; j < barrier.size(); j++) {
 			current[j] = barrierFunction(next[j], barrier[j]);
 		}
 	}
 
 	std::string ret;
 	ret.resize(current.size() * sizeof(current[0]));
-	for (int i = 0; i < current.size(); i++) {
-		current[i] = _byteswap_ulong(current[i]);
+    /*
+    for (size_t i = 0; i < current.size(); i++) {
+        //current[i] = _byteswap_ulong(current[i]);
+        current[i] = __builtin_bswap32(current[i]);
 	}
+    */
 	memcpy(&ret[0], &current[0], ret.size());
 	//return static_cast<uint32_t>(ret & UINT32_MAX);
 	return ret;
@@ -96,10 +108,10 @@ std::string MultilayerPerceptron::serialize() const
 
 	//std::string ret = "barriers:\n";
 	ss << "barriers:\n{\n";
-	for (int j = 0; j < barriers_.size(); j++) {
+    for (size_t j = 0; j < barriers_.size(); j++) {
 		auto& layer = barriers_[j];
 		ss << "{ ";
-		for (int i = 0; i < layer.size(); i++) {
+        for (size_t i = 0; i < layer.size(); i++) {
 			//ret += std::to_string(b) + " ";
 			if (i != 0) ss << ", ";
 			ss << "0x" << std::hex << std::uppercase << layer[i];
@@ -111,13 +123,13 @@ std::string MultilayerPerceptron::serialize() const
 	}
 	//ret += "weights:\n";
 	ss << "}\nweights:\n{\n";
-	for (int k = 0; k < weights_.size(); k++) {
+    for (size_t k = 0; k < weights_.size(); k++) {
 		auto& layer = weights_[k];
 		ss << "{ \n";
-		for (int j = 0; j < layer.size(); j++) {
+        for (size_t j = 0; j < layer.size(); j++) {
 			auto& neuron = layer[j];
 			ss << "{ ";
-			for (int i = 0; i < neuron.size(); i++) {
+            for (size_t i = 0; i < neuron.size(); i++) {
 				//ret += std::to_string(w) + " ";
 				if (i != 0) ss << ", ";
 				ss << "0x" << std::hex << std::uppercase << neuron[i];
@@ -140,15 +152,16 @@ std::string MultilayerPerceptron::serialize() const
 uint32_t MultilayerPerceptron::barrierFunction(uint64_t sum, uint32_t barrier) const
 {
 	if (!barrier) return 0;
-	//sum += 2; // here we kill fixed points 0 and 1
-	//uint64_t ret = sum % barrier;
-	//ret *= ret;
-	//ret %= barrier;
-	//ret *= ret;
-	//ret %= barrier;
-	//ret *= sum;
+    //sum += 3; // here we kill fixed points 0 and 1
+    uint64_t ret = sum % barrier;
 
-	uint64_t ret = (sum + 2) % barrier;
-	ret *= (sum + 3) % barrier;
-	return ret % barrier;
+    for(int i = 0; i < 16; i++){
+        ret *= ret;
+        ret %= barrier;
+    }
+
+    // uint64_t ret = (sum + 2) % barrier;
+    //ret *= ret + 1;
+    //ret %= barrier;
+    return ret;
 }

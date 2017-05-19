@@ -1,10 +1,9 @@
-TEMPLATE = app
-CONFIG += console c++14
+CONFIG += c++14
 CONFIG -= app_bundle
-CONFIG += qt
+CONFIG -= qt
 
-LIBS += -lpthread
-
+LIBS += -lpthread -lgomp
+QMAKE_CXXFLAGS += -fopenmp
 #QMAKE_CXXFLAGS_RELEASE -= -O
 #QMAKE_CXXFLAGS_RELEASE -= -O1
 #QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -19,7 +18,8 @@ SOURCES += main.cpp \
     ../blake/blake2b.c \
     ../blake/blake2bp.c \
     ../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.cpp \
-    ../NeuroGeneticHash/NeuroGeneticHash/HashTester.cpp
+    ../NeuroGeneticHash/NeuroGeneticHash/HashTester.cpp \
+    globalstatistics.cpp
 
 HEADERS += \
     src/evolution/phenotype.h \
@@ -37,4 +37,6 @@ HEADERS += \
     ../blake/blake2-config.h \
     ../blake/blake2-impl.h \
     ../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.h \
-    ../NeuroGeneticHash/NeuroGeneticHash/HashTester.h
+    ../NeuroGeneticHash/NeuroGeneticHash/HashTester.h \
+    annautoencoder.h \
+    globalstatistics.h

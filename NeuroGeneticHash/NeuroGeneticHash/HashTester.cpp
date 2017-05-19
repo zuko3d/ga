@@ -60,8 +60,8 @@ double HashTester::avalancheTester(hashFunc_t hash, int tests)
 		}
 
 		out.push_back(hash(&in, 1));
-		for (int i = 0; i < out.size(); i++) {
-			for (int j = i + 1; j < out.size(); j++) {
+        for (size_t i = 0; i < out.size(); i++) {
+            for (size_t j = i + 1; j < out.size(); j++) {
 				int fit = 0;
 				uint64_t *op1, *op2;
 				op1 = reinterpret_cast<uint64_t*>(&out[i][0]);
@@ -70,7 +70,7 @@ double HashTester::avalancheTester(hashFunc_t hash, int tests)
 //for (int qwe = 0; qwe < 8; qwe++) std::cout << std::hex << static_cast<uint8_t>(out[i][qwe]);
 //std::cout << "\n";
 //std::cout << std::hex << *op2 << "\n";
-				for (int k = 0; k < (bitsize >> 6); k++) {
+                for (uint32_t k = 0; k < (bitsize >> 6); k++) {
                     //fit += __popcnt64((*op1) ^ (*op2));
                     fit += __builtin_popcountll((*op1) ^ (*op2));
 					op1++;
