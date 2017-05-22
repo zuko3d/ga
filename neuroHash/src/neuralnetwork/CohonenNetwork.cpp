@@ -1,6 +1,6 @@
 #include "CohonenNetwork.h"
 
-#include "../../neuroHash/src/global.h"
+#include "src/global/global.h"
 #include <cstring>
 
 CohonenNetwork::CohonenNetwork(std::vector<size_t> layers)

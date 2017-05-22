@@ -1,7 +1,7 @@
 #ifndef PHENOTYPE_H
 #define PHENOTYPE_H
 
-#include "../global.h"
+#include "src/global/global.h"
 
 #include <string>
 

@@ -46,10 +46,6 @@ Simple2x2x1Perceptron Simple2x2x1Perceptron::cross(const Simple2x2x1Perceptron &
 //        qDebug() << QString::number( *allele2, 2 );
 //        qDebug() << QString::number( *allele3, 2 );
 
-        auto result = ((*allele1) | (*allele2)) &
-                ((*allele1) | (*allele3)) &
-                ((*allele2) | (*allele3));
-
 //        qDebug() << QString::number( result, 2 );
 
         *resultAllele =    ((*allele1) | (*allele2)) &

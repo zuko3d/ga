@@ -2,14 +2,9 @@
 #include "src/evolution/testphenotype.h"
 #include "src/evolution/testphenotypediofant.h"
 #include "src/evolution/trainerphenotype.h"
-#include "../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h"
-#include "../NeuroGeneticHash/NeuroGeneticHash/MaxEquation.h"
-#include "../NeuroGeneticHash/NeuroGeneticHash/PerceptronHasher.h"
 
-#include "../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.h"
-#include "../NeuroGeneticHash/NeuroGeneticHash/AnnHasher.h"
-#include "annautoencoder.h"
-#include "../blake/blake2.h"
+#include "src/neuralnetwork/annautoencoder.h"
+#include "blake/blake2.h"
 
 #include <iomanip>
 
@@ -30,18 +25,17 @@ int main()
     std::cout << GlobalStatistics::primes_.size() << "\n";
 
     auto best = GeneticTrainer<AnnAutoEncoder<MultilayerPerceptron> >::survivalOfTheFittest(
-                1000,      // max epochs
-                500000,     // max time (msec)
-                1000,          // villages
-                100,      // village population
-                1.0,       // mutation probability
-                0.05,       // cross probability
-                0.52,        // top X cut-off ("elitism" factor)
-                1.1,// stagnation coefficient
-                10,         // innovationsProtectedEpochs
-                86,         // output level
-                true,       // multithreaded?
-                1.0);     // target fitness
+                100000,   // max epochs
+                38 * 3600 * 1000, // max time (msec)
+                1000,   // villages
+                10,    // village population
+                1.0,    // mutation probability
+                0.05,   // cross probability
+                0.52,   // top X cut-off ("elitism" factor)
+                1.1,    // stagnation coefficient
+                10,     // innovationsProtectedEpochs
+                86,     // output level
+                0.99);   // target fitness
 
     std::cout << "best: " << best.serialize();
     std::cout << "Examples: " << std::endl;
@@ -66,6 +60,9 @@ int main()
 
     std::cout << "fails = " << fails << std::endl;
     std::cout << "unique: " << static_cast<double>(outs.size()) / total << " of " << total << std::endl;
+
+    auto annHash = best.ann_.getHashFunc();
+    std::cout << "Avalanche32: " << HashTester::avalancheTester32(annHash, 0xFFF) << std::endl;
 
     /*
     for(GlobalStatistics::mutRlayer = 1; GlobalStatistics::mutRlayer < 10; GlobalStatistics::mutRlayer+=2) {

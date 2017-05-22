@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../neuroHash/src/global.h"
+#include "src/global/global.h"
 
 #include <vector>
 #include <cstdint>
@@ -36,5 +36,5 @@ public:
 	std::vector< std::vector<std::vector<uint32_t> > > weights_;
 	std::vector< std::vector<uint32_t> > barriers_;
 
-    uint32_t order_ = 0x7FFF;
+    uint32_t order_ = 60;
 };

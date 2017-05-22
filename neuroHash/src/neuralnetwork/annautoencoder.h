@@ -1,10 +1,12 @@
 #pragma once
 
-#include "src/global.h"
+#include "src/global/global.h"
 #include <unordered_set>
 #include <set>
-#include "../NeuroGeneticHash/NeuroGeneticHash/HashTester.h"
-#include "globalstatistics.h"
+#include "src/testers/HashTester.h"
+#include "src/global/globalstatistics.h"
+
+#include "../testers/HashTester.h"
 
 template<class Ann> class AnnAutoEncoder
 {
@@ -45,10 +47,10 @@ public:
     Ann ann_;
 };
 
-#include "../NeuroGeneticHash/NeuroGeneticHash/MultilayerPerceptron.h"
+#include "src/neuralnetwork/MultilayerPerceptron.h"
 
 template<class Ann>
-AnnAutoEncoder<Ann>::AnnAutoEncoder() : ann_({ 2, 3, 2, 1 })
+AnnAutoEncoder<Ann>::AnnAutoEncoder() : ann_({ 2, 6, 6, 6, 6, 1 })
 {
     calcFitness();
     source = 0;
@@ -77,8 +79,8 @@ AnnAutoEncoder<Ann> AnnAutoEncoder<Ann>::mutate() const
         size_t neuron = hrand() % ret.ann_.weights_[layer].size();
         size_t w = hrand() % ret.ann_.weights_[layer][neuron].size();
 
-        ret.ann_.weights_[layer][neuron][w] = hrand(); // & ret.ann_.order_;
-        //ret.ann_.weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
+        //ret.ann_.weights_[layer][neuron][w] = hrand(); // & ret.ann_.order_;
+        ret.ann_.weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
     }
 
     ret.source = 1;
@@ -145,24 +147,27 @@ void AnnAutoEncoder<Ann>::calcFitness()
     double pts = 0.0;
     double total = 0.0;
 
-    std::set<char> outs;
-
     const uint32_t sz = 8;
 
     uint32_t fails = 0;
 
     for(uint32_t i = 0; i < sz; i++) {
-
         for(uint32_t j = i + 1; j < sz; j++) {
             total++;
             auto out = static_cast<uint8_t>(ann_.calcOut({j, i})[0]);
 
             uint8_t res = out ^ static_cast<uint8_t>(ann_.calcOut({i, j})[0]);
             fails += __builtin_popcount(static_cast<uint32_t>(res));
-            outs.insert(out);
         }
     }
     pts = 1.0 - static_cast<double>(fails) / 8.0 / total;
-    fitness_ = pts * outs.size() / total;
+
+    auto annHash = ann_.getHashFunc();
+
+    auto collisions = 1.0 - HashTester::collisionTester32(annHash, 0x7F, 0xFFFFFF);
+    // auto collisions = 1.0;
+
+    auto ava = std::max(2.5, HashTester::avalancheTester32(annHash, 40));
+    fitness_ = exp(pts) * log(1.0 + collisions) / log(2.) / ava * 2.5 / exp(1.0);
 }
 

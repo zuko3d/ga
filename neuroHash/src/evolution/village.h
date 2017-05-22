@@ -1,7 +1,7 @@
 #ifndef VILLAGE_H
 #define VILLAGE_H
 
-#include "../global.h"
+#include "src/global/global.h"
 
 #include <vector>
 #include <algorithm>

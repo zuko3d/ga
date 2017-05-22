@@ -1,13 +1,13 @@
 #pragma once
 
 #include <vector>
-#include "../../neuroHash/src/global.h"
+#include "src/global/global.h"
 
-class MaxEquation
+class PerceptronHasher
 {
 public:
-	MaxEquation();
-	~MaxEquation();
+	PerceptronHasher();
+	~PerceptronHasher();
 
 	double fitness() const {
 		if (fitness_ < 0) {
@@ -17,9 +17,11 @@ public:
 		return fitness_;
 	}
 
-	MaxEquation mutate() const;
+	PerceptronHasher mutate() const;
 
-	MaxEquation cross(const MaxEquation & p1, const MaxEquation & p2) const;
+	PerceptronHasher cross(const PerceptronHasher & p1, const PerceptronHasher & p2) const;
+
+	double calcOut(double x1, double x2) const;
 
 	std::string serialize() const {
 		std::string ret = "";
@@ -29,11 +31,11 @@ public:
 		return	ret;
 	}
 
-	bool operator>(const MaxEquation& op) const {
+	bool operator>(const PerceptronHasher& op) const {
 		return fitness_ < op.fitness_; // We compare to sort in "strange" order
 	}
 
-	bool operator<(const MaxEquation& op) const {
+	bool operator<(const PerceptronHasher& op) const {
 		return fitness_ > op.fitness_;
 	}
 
@@ -46,6 +48,8 @@ protected:
 
 	void calcFitness();
 	double fitness_;
+
+	double costFunction(double x) const;
 
 	std::vector<double> weights;
 };

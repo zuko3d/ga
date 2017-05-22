@@ -90,7 +90,7 @@ void PerceptronHasher::calcFitness()
 		u2 = reinterpret_cast<uint64_t*>(&out2);
 
 		uint64_t res = (*u1) ^ (*u2);
-		res = __popcnt64(res);
+        res = __builtin_popcountll(res);
 		if (res >= 32) {
 			res -= 32;
 		}

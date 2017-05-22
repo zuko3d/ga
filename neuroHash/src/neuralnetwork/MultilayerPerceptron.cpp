@@ -1,7 +1,7 @@
 #include "MultilayerPerceptron.h"
 
-#include "../../neuroHash/src/global.h"
-#include "globalstatistics.h"
+#include "src/global/global.h"
+#include "src/global/globalstatistics.h"
 
 #include <cstring>
 #include <sstream>
@@ -155,7 +155,7 @@ uint32_t MultilayerPerceptron::barrierFunction(uint64_t sum, uint32_t barrier) c
     //sum += 3; // here we kill fixed points 0 and 1
     uint64_t ret = sum % barrier;
 
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < 6; i++){
         ret *= ret;
         ret %= barrier;
     }

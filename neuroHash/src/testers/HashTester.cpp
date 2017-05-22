@@ -22,6 +22,29 @@ double HashTester::collisionTester(hashFunc_t hash, uint64_t tests, uint64_t bit
 	return ((double)tests - (double)hashes.size()) / ((double)tests);
 }
 
+double HashTester::collisionTester32(hashFunc_t hash, uint32_t tests, uint32_t bitMask)
+{
+    if(bitMask == 0) bitMask = tests * (tests + 2);
+
+    std::unordered_set<uint32_t> hashes;
+    uint32_t buf[2];
+    for (uint32_t i = 0; i < tests; i++) {
+        buf[0] = i;
+        for(uint32_t j = i + 1; j < tests; j++) {
+            uint32_t *h;
+            buf[1] = j;
+            auto ret = hash(buf, 2);
+            h = reinterpret_cast<uint32_t*>(&ret[0]);
+            hashes.insert((*h) & bitMask);
+        }
+    }
+
+    tests = (tests - 1) * tests / 2.0;
+
+    return ((double)tests - (double)hashes.size()) / ((double)tests);
+}
+
+
 double HashTester::collisionFinder(hashFunc_t hash)
 {
 	std::unordered_map<std::string, uint64_t> hashes;
@@ -40,6 +63,8 @@ double HashTester::collisionFinder(hashFunc_t hash)
 			hashes[ret] = i;
 		}
 	}
+
+    return 0;
 }
 
 double HashTester::avalancheTester(hashFunc_t hash, int tests)
@@ -50,19 +75,20 @@ double HashTester::avalancheTester(hashFunc_t hash, int tests)
 	int localtests = 1;
 
 	for (int test = 0; test < tests; test++) {
-		uint32_t in = hrand();
+        uint32_t in = hrand() & 0xFF;
 		std::vector<std::string> out;
 		out.reserve(localtests + 1);
 		out.resize(localtests);
 		for (auto& digest : out) {
-			auto tmpIn = in ^ (1 << (hrand() % (8 * sizeof(in))));
+            //auto tmpIn = in ^ (1 << (hrand() % (8 * sizeof(in))));
+            auto tmpIn = in ^ (1 << (hrand() % (8)));
 			digest = std::move(hash(&tmpIn, 1));
 		}
 
 		out.push_back(hash(&in, 1));
         for (size_t i = 0; i < out.size(); i++) {
             for (size_t j = i + 1; j < out.size(); j++) {
-				int fit = 0;
+                uint fit = 0;
 				uint64_t *op1, *op2;
 				op1 = reinterpret_cast<uint64_t*>(&out[i][0]);
 				op2 = reinterpret_cast<uint64_t*>(&out[j][0]);
@@ -88,6 +114,57 @@ double HashTester::avalancheTester(hashFunc_t hash, int tests)
 			}
 		}
 	}
+
+    return ((double) totalErr) / ((double)totalTests);
+}
+
+double HashTester::avalancheTester32(hashFunc_t hash, int tests)
+{
+    uint32_t totalErr = 0;
+    const auto bitsize = hash(&totalErr, 1).size() * 8;
+    int totalTests = 0;
+    int localtests = 1;
+
+    for (int test = 0; test < tests; test++) {
+        uint32_t in = hrand() & 0xFF;
+        std::vector<std::string> out;
+        out.reserve(localtests + 1);
+        out.resize(localtests);
+        for (auto& digest : out) {
+            //auto tmpIn = in ^ (1 << (hrand() % (8 * sizeof(in))));
+            auto tmpIn = in ^ (1 << (hrand() % (8)));
+            digest = std::move(hash(&tmpIn, 1));
+        }
+
+        out.push_back(hash(&in, 1));
+        for (size_t i = 0; i < out.size(); i++) {
+            for (size_t j = i + 1; j < out.size(); j++) {
+                uint fit = 0;
+                uint32_t *op1, *op2;
+                op1 = reinterpret_cast<uint32_t*>(&out[i][0]);
+                op2 = reinterpret_cast<uint32_t*>(&out[j][0]);
+//std::cout << std::hex << *op1 << "\n";
+//for (int qwe = 0; qwe < 8; qwe++) std::cout << std::hex << static_cast<uint8_t>(out[i][qwe]);
+//std::cout << "\n";
+//std::cout << std::hex << *op2 << "\n";
+                for (uint32_t k = 0; k < (bitsize >> 5); k++) {
+                    //fit += __popcnt64((*op1) ^ (*op2));
+                    fit += __builtin_popcount((*op1) ^ (*op2));
+                    op1++;
+                    op2++;
+                }
+
+                if (fit > bitsize / 2) {
+                    fit -= bitsize / 2;
+                }
+                else {
+                    fit = bitsize / 2 - fit;
+                }
+                totalErr += fit;
+                totalTests++;
+            }
+        }
+    }
 
     return ((double) totalErr) / ((double)totalTests);
 }

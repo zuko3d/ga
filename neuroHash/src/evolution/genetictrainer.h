@@ -1,7 +1,7 @@
 #ifndef GENETICTRAINER_H
 #define GENETICTRAINER_H
 
-#include "../global.h"
+#include "src/global/global.h"
 
 #include "phenotype.h"
 #include "village.h"
@@ -14,7 +14,7 @@
 
 #include <omp.h>
 
-#include "globalstatistics.h"
+#include "src/global/globalstatistics.h"
 
 template <class Creature>
 class GeneticTrainer
@@ -31,7 +31,6 @@ public:
 		const double stagnationCoef = 1.02,
 		const int innovationsProtectedEpochs = 5,
 		const int outputLevel = 0, // 0 for nothing, 100 for everything
-        const bool threaded = false,
         const double enoughFitness = 1e10
 	) {
 		size_t maxPopulation = villageSize * 4;

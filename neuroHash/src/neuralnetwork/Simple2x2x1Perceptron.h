@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../../neuroHash/src/global.h"
+#include "src/global/global.h"
 
 class Simple2x2x1Perceptron
 {

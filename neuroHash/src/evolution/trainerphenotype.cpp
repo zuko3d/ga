@@ -1,6 +1,6 @@
 #include "trainerphenotype.h"
 
-#include "../../../NeuroGeneticHash/NeuroGeneticHash/Simple2x2x1Perceptron.h"
+#include "src/neuralnetwork/Simple2x2x1Perceptron.h"
 
 const int kTotalPop = 100;
 

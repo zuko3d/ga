@@ -1,7 +1,7 @@
 #ifndef GLOBALSTATISTICS_H
 #define GLOBALSTATISTICS_H
 
-#include "src/global.h"
+#include "src/global/global.h"
 
 #include <vector>
 
