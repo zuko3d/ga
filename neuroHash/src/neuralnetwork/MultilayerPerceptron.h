@@ -36,5 +36,5 @@ public:
 	std::vector< std::vector<std::vector<uint32_t> > > weights_;
 	std::vector< std::vector<uint32_t> > barriers_;
 
-    uint32_t order_ = 60;
+    uint32_t order_ = 20;
 };

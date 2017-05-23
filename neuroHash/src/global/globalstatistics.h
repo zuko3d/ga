@@ -19,6 +19,8 @@ public:
     static uint32_t mutRlayer;
     static uint32_t mutRweight;
 
+    static size_t startPrime;
+
     static std::vector<uint32_t> primes_;
 };
 

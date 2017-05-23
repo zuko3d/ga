@@ -50,7 +50,7 @@ public:
 #include "src/neuralnetwork/MultilayerPerceptron.h"
 
 template<class Ann>
-AnnAutoEncoder<Ann>::AnnAutoEncoder() : ann_({ 2, 6, 6, 6, 6, 1 })
+AnnAutoEncoder<Ann>::AnnAutoEncoder() : ann_({ 2, 4, 4, 1 })
 {
     calcFitness();
     source = 0;
@@ -70,7 +70,7 @@ AnnAutoEncoder<Ann> AnnAutoEncoder<Ann>::mutate() const
         size_t layer = hrand() % (ret.ann_.barriers_.size() - 1);
         size_t neuron = hrand() % ret.ann_.barriers_[layer].size();
 
-        ret.ann_.barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
+        ret.ann_.barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % ret.ann_.order_ + GlobalStatistics::startPrime ];
     }
 
     auto r = 6;
@@ -80,7 +80,7 @@ AnnAutoEncoder<Ann> AnnAutoEncoder<Ann>::mutate() const
         size_t w = hrand() % ret.ann_.weights_[layer][neuron].size();
 
         //ret.ann_.weights_[layer][neuron][w] = hrand(); // & ret.ann_.order_;
-        ret.ann_.weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
+        ret.ann_.weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % ret.ann_.order_ + GlobalStatistics::startPrime ];
     }
 
     ret.source = 1;
@@ -164,10 +164,11 @@ void AnnAutoEncoder<Ann>::calcFitness()
 
     auto annHash = ann_.getHashFunc();
 
-    auto collisions = 1.0 - HashTester::collisionTester32(annHash, 0x7F, 0xFFFFFF);
+    auto collisions = 1.0 - HashTester::collisionTester32(annHash, 0x7, 0x3F);
     // auto collisions = 1.0;
 
-    auto ava = std::max(2.5, HashTester::avalancheTester32(annHash, 40));
-    fitness_ = exp(pts) * log(1.0 + collisions) / log(2.) / ava * 2.5 / exp(1.0);
+    //auto ava = std::max(2.5, HashTester::avalancheTester32(annHash, 40));
+    //fitness_ = exp(pts) * log(1.0 + collisions) / log(2.) / ava * 2.5 / exp(1.0);
+    fitness_ = exp(pts) * log(1.0 + collisions) / log(2.) / exp(1.0);
 }
 

@@ -11,12 +11,10 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 {
 	barriers_.resize(layers.size());
 
-    GlobalStatistics::primes_.resize(order_);
-
     for (size_t i = 0; i < layers.size(); i++) {
 		barriers_[i].resize(layers[i]);
 		for (auto& b : barriers_[i]) {
-            b = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
+            b = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
 		}
 	}
     for(auto& b : barriers_.back()){
@@ -30,7 +28,7 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 			w.resize(barriers_[i + 1].size());
 			for (auto& weight : w) {
                 //weight = hrand() & order_;
-                weight = GlobalStatistics::primes_[ hrand() % GlobalStatistics::primes_.size() ];
+                weight = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
 			}
 		}
 	}
