@@ -3,6 +3,7 @@
 #include "src/evolution/testphenotypediofant.h"
 #include "src/evolution/trainerphenotype.h"
 
+#include "src/neuralnetwork/sharedsecretgenerator.h"
 #include "src/neuralnetwork/annautoencoder.h"
 #include "blake/blake2.h"
 
@@ -22,74 +23,79 @@ int main()
 //    HashTester::overallTest(blake512);
 //    return 0;
 
-    GlobalStatistics::startPrime = 2000;
+    GlobalStatistics::startPrime = 0;
+    GlobalStatistics::mlpOrder = 4;
 
-    std::cout << GlobalStatistics::primes_.size() << "\n";
+    for(size_t i = 0; i < GlobalStatistics::mlpOrder; i++){
+        GlobalStatistics::primes_[i] = GlobalStatistics::primes_[400 + hrand() % 4000];
+    }
 
-/*
-    auto bestSolution = GeneticTrainer<AnnAutoEncoder<MultilayerPerceptron> >::survivalOfTheFittest(
+    GlobalStatistics::mlpOrder++;
+
+    auto bestSolution = GeneticTrainer<SharedSecretGenerator>::survivalOfTheFittest(
                 100000, // max epochs
-                50000,  // max time (msec)
-                300,    // villages
-                5,      // village population
+                14 * 3600 * 1000,  // max time (msec)
+                1000,    // villages
+                10,      // village population
                 1.0,    // mutation probability
-                0.05,   // cross probability
+                0.1,   // cross probability
                 0.52,   // top X cut-off ("elitism" factor)
                 1.1,    // stagnation coefficient
                 10,     // innovationsProtectedEpochs
                 86,     // output level
-                0.99);  // target fitness
+                0.9999);  // target fitness
 
-    auto best = bestSolution.ann_;
-*/
-    auto best = MultilayerPerceptron({
-                                         {
-                                         { 0xC1, 0x95, 0xD3, 0x95, 0x35, 0x67 },
-                                         { 0x7, 0x95, 0x9D, 0x6B, 0x35, 0x97 }
-                                         },
-                                         {
-                                         { 0x95, 0x47, 0x10F, 0x29, 0x3F, 0xC5 },
-                                         { 0xD3, 0x47, 0xE9, 0x89, 0x61, 0xB5 },
-                                         { 0x10D, 0x9D, 0x17, 0x89, 0xC1, 0x10D },
-                                         { 0x3B, 0x6B, 0x10F, 0x11, 0x67, 0xB7 },
-                                         { 0x59, 0x95, 0x67, 0xDD, 0x95, 0xE5 },
-                                         { 0x7, 0xC7, 0x89, 0x115, 0x115, 0x13 }
-                                         },
-                                         {
-                                         { 0xD, 0x8B, 0xBF, 0x47, 0x119, 0x119 },
-                                         { 0x7, 0x6D, 0x49, 0x1F, 0x1F, 0x3 },
-                                         { 0xD, 0x21, 0xEF, 0x13, 0xA7, 0x43 },
-                                         { 0xA7, 0xB3, 0x71, 0xD, 0xC1, 0x3D },
-                                         { 0xE5, 0xBF, 0xD, 0x9D, 0xA7, 0x5F },
-                                         { 0xF, 0xE3, 0x5, 0x47, 0xDF, 0xD }
-                                         },
-                                         {
-                                         { 0xB, 0x47, 0x4F, 0xC7, 0x1F, 0xBF },
-                                         { 0xDF, 0x13, 0x119, 0xDF, 0x4F, 0x25 },
-                                         { 0x7, 0x53, 0xF, 0xE5, 0xD3, 0xFB },
-                                         { 0x1F, 0x13, 0x97, 0x6B, 0xA7, 0x10D },
-                                         { 0x53, 0xEF, 0x35, 0x10D, 0x10F, 0x10F },
-                                         { 0x101, 0xAD, 0x3, 0x47, 0x5, 0xB5 }
-                                         },
-                                         {
-                                         { 0x33 },
-                                         { 0x2B },
-                                         { 0xC1 },
-                                         { 0xBF },
-                                         { 0xE7 },
-                                         { 0x4B }
-                                         }
-                                         }
-,{
-                                         { 0x7, 0x95 },
-                                         { 0x2, 0x1D, 0x17, 0x7, 0xF1, 0x7F },
-                                         { 0x2D, 0xDB, 0x3B, 0x4F, 0x7F, 0xFB },
-                                         { 0x25, 0xA3, 0x59, 0xAD, 0x1F, 0xC7 },
-                                         { 0x53, 0x43, 0x95, 0x107, 0x2B, 0xFB },
-                                         { 0xFFFFFFFB }
-                                         }
+    auto best = bestSolution;
+
+    /*
+    const uint32_t x13 = 71;
+    const uint32_t xB = 0xB;
+    const uint32_t xD = 0xD;
+    const uint32_t x3 = 0x3;
+    const uint32_t x17 = 67;
+    const uint32_t x5 = 0x5;
+    const uint32_t x1D = 0x1D;
+    const uint32_t x7 = 0xFF8;
+    const uint32_t x11 = 0x11;
+
+    auto mlp1 = MultilayerPerceptron(
+    {
+    {
+    { xB, x13 }
+    },
+    {
+    { xD },
+    { x13 }
+    }
+    }
+,
+    {
+    { x3 },
+    { x13, x17 },
+    { x13 }
+    }
+                );
+
+    auto mlp2 = MultilayerPerceptron(
+    {
+    {
+    { x13, x5 },
+    { x1D, x13 }
+    },
+    {
+    { xD },
+    { xD }
+    }
+    }
+,
+    {
+    { x7, x11 },
+    { x13, x13 },
+    { x17 }
+    }
 );
-
+    auto best = SharedSecretGenerator(mlp1, mlp2);
+    */
 
     std::cout << "best: " << best.serialize();
     std::cout << "Examples: " << std::endl;
@@ -97,26 +103,29 @@ int main()
     const uint32_t sz = 0xFFF;
 
     uint32_t fails = 0;
-    std::set<std::string> outs;
+    std::set<uint32_t> outs;
     double total = 0;
 
-    for(uint32_t i = 0xFFFFFFFB - sz; i < 0xFFFFFFFB; i++) {
-
+    //for(uint32_t i = 0xFFFFFFFB - sz; i < 0xFFFFFFFB; i++) {
+    for(uint32_t i = 0; i < sz; i++) {
         for(uint32_t j = 0; j < 0xF; j++) {
-            auto out_ = best.calcOut({j, i});
-            auto out = static_cast<uint8_t>(out_[0]);
-            outs.insert(out_);
+            if(j >= i) continue;
+            auto out = best.calcOut({j}, {i});
+            outs.insert(out);
             total++;
-            uint8_t res = out ^ static_cast<uint8_t>(best.calcOut({i, j})[0]);
-            fails += __builtin_popcount(static_cast<uint32_t>(res));
+            auto out2 = best.calcOut({i}, {j});
+            auto res = out ^ out2;
+            fails += __builtin_popcount(res);
+
+            if((i < 4) && (j < 4)){
+                std::cout << i << ", " << j << ":\t" << out << " | " << out2 << std::endl;
+            }
         }
     }
 
     std::cout << "fails = " << fails << std::endl;
     std::cout << "unique: " << outs.size() << " / " << static_cast<double>(outs.size()) / total << " of " << total << std::endl;
-
-    auto annHash = best.getHashFunc();
-    std::cout << "Avalanche32: " << HashTester::avalancheTester32(annHash, 0xFFF) << std::endl;
+    std::cout << "fitness: " << bestSolution.fitness() << std::endl;
 
     /*
     for(GlobalStatistics::mutRlayer = 1; GlobalStatistics::mutRlayer < 10; GlobalStatistics::mutRlayer+=2) {
@@ -151,18 +160,18 @@ int main()
 	auto best = MultilayerPerceptron(
 	{
 		{
-			{ 0x5e2f1abb, 0x96ea1fa6 },
+            { x5e2f1abb, 0x96ea1fa6 },
 			{ 0xf3e8eb32, 0x6abdcb37 },
 			{ 0x815edbe0, 0xca14d813 },
 			{ 0x8d1c574c, 0xfd5bdf4a }
 		},
 		{
-			{ 0x3c1909c3, 0x847eb16e },
-			{ 0x77aeb9ca, 0x5cfb5a10 }
+            { x3c1909c3, 0x847eb16e },
+            { 0x77aeb9ca, x5cfb5a10 }
 		}
 	},
 	{
-		{ 0x3bef2b41, 0xd4ec026, 0xe7b3c846, 0x1fcb0cf1 },
+        { x3bef2b41, xD4ec026, 0xe7b3c846, 0x1fcb0cf1 },
 		{ 0x7eed0d4d, 0x4abe99c4 },
 		{ 0xffffffff, 0xffffffff }
 	}

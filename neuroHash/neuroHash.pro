@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     src/neuralnetwork/CohonenNetwork.cpp \
     src/neuralnetwork/MaxEquation.cpp \
     src/neuralnetwork/PerceptronHasher.cpp \
-    src/neuralnetwork/fastmlp.cpp
+    src/neuralnetwork/fastmlp.cpp \
+    src/neuralnetwork/sharedsecretgenerator.cpp
 
 HEADERS += \
     src/evolution/phenotype.h \
@@ -46,4 +47,5 @@ HEADERS += \
     src/neuralnetwork/CohonenNetwork.h \
     src/neuralnetwork/MaxEquation.h \
     src/neuralnetwork/PerceptronHasher.h \
-    src/neuralnetwork/fastmlp.h
+    src/neuralnetwork/fastmlp.h \
+    src/neuralnetwork/sharedsecretgenerator.h

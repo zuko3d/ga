@@ -2,6 +2,8 @@
 
 #include "src/global/global.h"
 
+#include "../global/globalstatistics.h"
+
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -19,12 +21,16 @@ public:
 	~MultilayerPerceptron();
 
 	std::string calcOut(const std::vector<uint32_t>& input);
+    uint32_t calcOutUint32(const std::vector<uint32_t>& _input);
 	std::string calcOutSingle(uint32_t* input, size_t size) {
 		std::vector<uint32_t> v;
 		v.resize(size);
         std::memcpy(&v[0], input, sizeof(uint32_t) * size);
 		return calcOut(v);
 	}
+
+    void randomlyChangeWeight();
+    void randomlyChangeBias();
 
 	hashFunc_t getHashFunc();
 
@@ -36,5 +42,5 @@ public:
 	std::vector< std::vector<std::vector<uint32_t> > > weights_;
 	std::vector< std::vector<uint32_t> > barriers_;
 
-    uint32_t order_ = 20;
+    uint32_t order_ = GlobalStatistics::mlpOrder;
 };

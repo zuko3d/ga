@@ -20,6 +20,7 @@ public:
     static uint32_t mutRweight;
 
     static size_t startPrime;
+    static size_t mlpOrder;
 
     static std::vector<uint32_t> primes_;
 };

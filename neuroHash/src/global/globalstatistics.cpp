@@ -9,6 +9,7 @@ uint32_t GlobalStatistics::mutRlayer = 1;
 uint32_t GlobalStatistics::mutRweight = 1;
 
 size_t GlobalStatistics::startPrime = 100;
+size_t GlobalStatistics::mlpOrder = 3;
 
 GlobalStatistics::GlobalStatistics()
 {

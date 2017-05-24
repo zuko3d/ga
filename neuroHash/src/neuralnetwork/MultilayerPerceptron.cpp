@@ -92,7 +92,57 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
     */
 	memcpy(&ret[0], &current[0], ret.size());
 	//return static_cast<uint32_t>(ret & UINT32_MAX);
-	return ret;
+    return ret;
+}
+
+uint32_t MultilayerPerceptron::calcOutUint32(const std::vector<uint32_t> &_input)
+{
+    std::vector<uint32_t> current;
+    std::vector<uint64_t> next;
+    auto input = _input;
+
+
+    while (input.size() < barriers_[0].size()) {
+        input.push_back(0);
+    }
+
+    current = input;
+
+    for (size_t i = 0; i < weights_.size(); i++) {
+        next.clear();
+        next.resize(barriers_[i + 1].size(), 0);
+        for (size_t j = 0; j < weights_[i].size(); j++) {
+            for (size_t k = 0; k < weights_[i][j].size(); k++) {
+                next[k] += static_cast<uint64_t>(current[j]) * static_cast<uint64_t>(weights_[i][j][k]);
+            }
+        }
+
+        current.resize(next.size());
+        auto& barrier = barriers_[i + 1];
+        for (size_t j = 0; j < barrier.size(); j++) {
+            current[j] = barrierFunction(next[j], barrier[j]);
+        }
+    }
+
+    return current[0];
+}
+
+void MultilayerPerceptron::randomlyChangeWeight()
+{
+    size_t layer = hrand() % (weights_.size());
+    size_t neuron = hrand() % weights_[layer].size();
+    size_t w = hrand() % weights_[layer][neuron].size();
+
+    //ret.ann_.weights_[layer][neuron][w] = hrand(); // & ret.ann_.order_;
+    weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
+}
+
+void MultilayerPerceptron::randomlyChangeBias()
+{
+    size_t layer = hrand() % (barriers_.size() - 1);
+    size_t neuron = hrand() % barriers_[layer].size();
+
+    barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
 }
 
 hashFunc_t MultilayerPerceptron::getHashFunc()
