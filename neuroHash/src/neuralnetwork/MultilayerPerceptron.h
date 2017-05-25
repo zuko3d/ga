@@ -29,12 +29,17 @@ public:
 		return calcOut(v);
 	}
 
+    std::vector<std::vector<uint32_t> > getInternalResults(const std::vector<uint32_t>& _input);
+
     void randomlyChangeWeight();
     void randomlyChangeBias();
+
+    void reduceWeights();
 
 	hashFunc_t getHashFunc();
 
 	std::string serialize() const;
+
 
 // Those should be private but we want to change the ANN from outside in an easy manner
 	uint32_t barrierFunction(uint64_t sum, uint32_t barrier) const;

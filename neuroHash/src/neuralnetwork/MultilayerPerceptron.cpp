@@ -11,6 +11,11 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 {
 	barriers_.resize(layers.size());
 
+    for(auto& l: layers) {
+        l++; // add one more neuron for Bias
+    }
+    layers.back()--;
+
     for (size_t i = 0; i < layers.size(); i++) {
 		barriers_[i].resize(layers[i]);
 		for (auto& b : barriers_[i]) {
@@ -69,6 +74,7 @@ std::string MultilayerPerceptron::calcOut(const std::vector<uint32_t>& _input)
     for (size_t i = 0; i < weights_.size(); i++) {
 		next.clear();
 		next.resize(barriers_[i + 1].size(), 0);
+        current.back() = barriers_[i].back();
         for (size_t j = 0; j < weights_[i].size(); j++) {
             for (size_t k = 0; k < weights_[i][j].size(); k++) {
                 next[k] += static_cast<uint64_t>(current[j]) * static_cast<uint64_t>(weights_[i][j][k]);
@@ -107,6 +113,7 @@ uint32_t MultilayerPerceptron::calcOutUint32(const std::vector<uint32_t> &_input
     }
 
     current = input;
+    current.back() = barriers_[0].back();
 
     for (size_t i = 0; i < weights_.size(); i++) {
         next.clear();
@@ -122,9 +129,50 @@ uint32_t MultilayerPerceptron::calcOutUint32(const std::vector<uint32_t> &_input
         for (size_t j = 0; j < barrier.size(); j++) {
             current[j] = barrierFunction(next[j], barrier[j]);
         }
+        if(i < weights_.size() - 1){
+            current.back() = barriers_[i+1].back();
+        }
     }
 
     return current[0];
+}
+
+std::vector<std::vector<uint32_t> > MultilayerPerceptron::getInternalResults(const std::vector<uint32_t> &_input)
+{
+    std::vector<uint32_t> current;
+    std::vector<uint64_t> next;
+    auto input = _input;
+    std::vector<std::vector<uint32_t> > ret;
+
+    while (input.size() < barriers_[0].size()) {
+        input.push_back(0);
+    }
+
+    current = input;
+    current.back() = barriers_[0].back();
+    ret.push_back(current);
+
+    for (size_t i = 0; i < weights_.size(); i++) {
+        next.clear();
+        next.resize(barriers_[i + 1].size(), 0);
+        for (size_t j = 0; j < weights_[i].size(); j++) {
+            for (size_t k = 0; k < weights_[i][j].size(); k++) {
+                next[k] += static_cast<uint64_t>(current[j]) * static_cast<uint64_t>(weights_[i][j][k]);
+            }
+        }
+
+        current.resize(next.size());
+        auto& barrier = barriers_[i + 1];
+        for (size_t j = 0; j < barrier.size(); j++) {
+            current[j] = barrierFunction(next[j], barrier[j]);
+        }
+        if(i < weights_.size() - 1){
+            current.back() = barriers_[i+1].back();
+        }
+        ret.push_back(current);
+    }
+
+    return ret;
 }
 
 void MultilayerPerceptron::randomlyChangeWeight()
@@ -139,10 +187,26 @@ void MultilayerPerceptron::randomlyChangeWeight()
 
 void MultilayerPerceptron::randomlyChangeBias()
 {
-    size_t layer = hrand() % (barriers_.size() - 1);
+    size_t layer = hrand() % (barriers_.size());
     size_t neuron = hrand() % barriers_[layer].size();
 
     barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
+}
+
+void MultilayerPerceptron::reduceWeights()
+{
+    for(size_t layer = 0; layer < weights_.size(); layer++) {
+        for(size_t from = 0; from < weights_[layer].size(); from++) {
+            for(size_t to = 0; to < weights_[layer][from].size(); to++) {
+                weights_[layer][from][to] %= barriers_[layer + 1][to];
+                if(to == weights_[layer][from].size() - 1) {
+                    if(layer != weights_.size() - 1) {
+                        weights_[layer][from][to] = 0;
+                    }
+                }
+            }
+        }
+    }
 }
 
 hashFunc_t MultilayerPerceptron::getHashFunc()

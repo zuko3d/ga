@@ -13,8 +13,8 @@ class SharedSecretGenerator
 {
 public:
     SharedSecretGenerator(
-            std::vector<size_t> keyLayers = {1, 4, 4, 1} ,
-            std::vector<size_t> secLayers = {2, 3, 4, 5, 1}
+            std::vector<size_t> keyLayers = {1, 2, 1} ,
+            std::vector<size_t> secLayers = {2, 2, 1}
             );
 
     SharedSecretGenerator(

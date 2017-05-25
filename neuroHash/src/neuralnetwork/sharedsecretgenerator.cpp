@@ -125,7 +125,7 @@ void SharedSecretGenerator::calcFitness()
     double pts = 0.0;
     double total = 0.0;
 
-    const uint32_t sz = 9;
+    const uint32_t sz = 11;
 
     uint32_t fails = 0;
 
@@ -145,7 +145,7 @@ void SharedSecretGenerator::calcFitness()
 
     double unique = static_cast<double>(outs.size()) / total;
 
-    // if(outs.size() > 10) unique = 1.0;
+    //if(outs.size() > 8) unique = 1.0;
 
     fitness_ = pts * unique;
     // fitness_ = pts;

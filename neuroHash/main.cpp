@@ -7,6 +7,10 @@
 #include "src/neuralnetwork/annautoencoder.h"
 #include "blake/blake2.h"
 
+#include "src/testers/visualizationtester.h"
+
+#include <vtkRenderWindow.h>
+
 #include <iomanip>
 
 std::string blake512(uint32_t in) {
@@ -27,16 +31,16 @@ int main()
     GlobalStatistics::mlpOrder = 4;
 
     for(size_t i = 0; i < GlobalStatistics::mlpOrder; i++){
-        GlobalStatistics::primes_[i] = GlobalStatistics::primes_[400 + hrand() % 4000];
+        GlobalStatistics::primes_[i] = GlobalStatistics::primes_[1000 + hrand() % 2000];
     }
 
-    GlobalStatistics::mlpOrder++;
+    //GlobalStatistics::mlpOrder++;
 
     auto bestSolution = GeneticTrainer<SharedSecretGenerator>::survivalOfTheFittest(
                 100000, // max epochs
-                14 * 3600 * 1000,  // max time (msec)
+                15 * 3600 * 1000,  // max time (msec)
                 1000,    // villages
-                10,      // village population
+                5,      // village population
                 1.0,    // mutation probability
                 0.1,   // cross probability
                 0.52,   // top X cut-off ("elitism" factor)
@@ -46,6 +50,106 @@ int main()
                 0.9999);  // target fitness
 
     auto best = bestSolution;
+
+    /*
+    auto keygen = MultilayerPerceptron(
+    {
+    {
+    { 0xB, 0x13 }
+    },
+    {
+    { 0xD },
+    { 0x13 }
+    }
+    }
+,
+    {
+    { 0x3 },
+    { 0x13, 0x17 },
+    { 0x13 }
+    }
+
+                );
+    auto best = keygen;
+    auto secgen = MultilayerPerceptron(
+    {
+    {
+    { 0x13, 0x5 },
+    { 0x1D, 0x13 }
+    },
+    {
+    { 0xD },
+    { 0xD }
+    }
+    }
+,
+    {
+    { 0x7, 0x11 },
+    { 0x13, 0x13 },
+    { 0x17 }
+    }
+    );
+*/
+    auto keygen = bestSolution.keygen_;
+    auto secgen = bestSolution.secgen_;
+    keygen.reduceWeights();
+    secgen.reduceWeights();
+
+    std::vector<std::vector<std::vector<vtkSmartPointer<vtkGraphLayoutView> > > > views;
+    views.resize(10);
+    for(int i = 0; i < 4; i++) {
+        views[i].resize(10);
+        for(auto& v: views[i]){
+            v.resize(10);
+        }
+    }
+
+    views[0][0][0] = vtkSmartPointer<vtkGraphLayoutView>::New();
+    views[0][0][0]->GetRenderWindow()->SetPosition(0, 0);
+    VisualizationTester::visNetwork(keygen, views[0][0][0]);
+
+    views[0][0][1] = vtkSmartPointer<vtkGraphLayoutView>::New();
+    views[0][0][1]->GetRenderWindow()->SetPosition(400, 0);
+    VisualizationTester::visNetwork(secgen, views[0][0][1]);
+
+    for(int i = 0; i < 3; i++) {
+        for(int j = i + 1; j < 3; j++) {
+            views[i][j][0] = vtkSmartPointer<vtkGraphLayoutView>::New();
+            views[i][j][0]->GetRenderWindow()->SetPosition(i * 800, j * 400);
+
+            views[i][j][1] = vtkSmartPointer<vtkGraphLayoutView>::New();
+            views[i][j][1]->GetRenderWindow()->SetPosition(i * 800 + 300, j * 400);
+
+            views[j][i][0] = vtkSmartPointer<vtkGraphLayoutView>::New();
+            views[j][i][0]->GetRenderWindow()->SetPosition(j * 800, i * 400);
+
+            views[j][i][1] = vtkSmartPointer<vtkGraphLayoutView>::New();
+            views[j][i][1]->GetRenderWindow()->SetPosition(j * 800 + 300, i * 400);
+
+            uint32_t r1 = hrand() & 0xFF;
+            uint32_t r2 = hrand() & 0xFF;
+            VisualizationTester::visVector(keygen.getInternalResults({r1}), views[i][j][0]);
+            auto outr1 = keygen.calcOutUint32({r1});
+
+            VisualizationTester::visVector(secgen.getInternalResults({r2, outr1}), views[i][j][1]);
+
+
+            VisualizationTester::visVector(keygen.getInternalResults({r2}), views[j][i][0]);
+            auto outr2 = keygen.calcOutUint32({r2});
+
+            VisualizationTester::visVector(secgen.getInternalResults({r1, outr2}), views[j][i][1]);
+
+            std::this_thread::yield();
+            views[j][i][0]->Render();
+            std::this_thread::yield();
+            views[j][i][1]->Render();
+            std::this_thread::yield();
+            views[i][j][0]->Render();
+            std::this_thread::yield();
+            views[i][j][1]->Render();
+            std::this_thread::yield();
+        }
+    }
 
     /*
     const uint32_t x13 = 71;
@@ -196,5 +300,8 @@ int main()
 
 	HashTester::collisionFinder(hasher);
     */
+
+    int i;
+    std::cin >> i;
     return 0;
 }
