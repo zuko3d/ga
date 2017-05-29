@@ -8,8 +8,13 @@ uint64_t GlobalStatistics::positiveMutations = 0;
 uint32_t GlobalStatistics::mutRlayer = 1;
 uint32_t GlobalStatistics::mutRweight = 1;
 
-size_t GlobalStatistics::startPrime = 100;
+size_t GlobalStatistics::startingPrimeForWeights = 100;
+size_t GlobalStatistics::startingPrimeForBarriers = 100;
 size_t GlobalStatistics::mlpOrder = 3;
+
+std::vector<uint32_t> GlobalStatistics::weightValues_;
+std::vector<uint32_t> GlobalStatistics::barrierValues_;
+std::vector<vtkSmartPointer<vtkRenderWindow> > GlobalStatistics::windows_;
 
 GlobalStatistics::GlobalStatistics()
 {

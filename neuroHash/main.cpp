@@ -27,26 +27,78 @@ int main()
 //    HashTester::overallTest(blake512);
 //    return 0;
 
-    GlobalStatistics::startPrime = 0;
+    GlobalStatistics::startingPrimeForWeights = 10;
+    GlobalStatistics::startingPrimeForBarriers = 0;
     GlobalStatistics::mlpOrder = 4;
 
-    for(size_t i = 0; i < GlobalStatistics::mlpOrder; i++){
-        GlobalStatistics::primes_[i] = GlobalStatistics::primes_[1000 + hrand() % 2000];
-    }
+    static const char clr[] = { 0, 5, 4, 6, 2, 7, 3, 1};
 
-    //GlobalStatistics::mlpOrder++;
+//    for(size_t bpwr =22; bpwr < 25; bpwr ++){
+//        std::cout << "\033[39mbar power: " << bpwr << " ==================================" << std::endl;
+//        for(size_t wpwr = 25; wpwr < 35; wpwr += 3) {
+//            std::cout << "\033[39mbar: " << bpwr << ", weight power: " << wpwr << std::endl;
+//            std::cout << " \t";
+
+//            for(int pop = 0; pop < 1000; pop *= 3) {
+//                std::cout << pop << "\t";
+//            }
+//            std::cout << std::endl;
+
+            for(int time = 100; time < 100000; time *= 2) {
+                std::cout << time << ":\t";
+                for(int trial = 0; trial < 10; trial++) {
+
+                    auto totalBarriers = 2;
+                    GlobalStatistics::barrierValues_.clear();
+                    for(size_t i = 0; i < totalBarriers; i++){
+                        GlobalStatistics::barrierValues_.push_back(GlobalStatistics::primes_[hrand() % 22]);
+                    }
+
+                    GlobalStatistics::weightValues_.clear();
+                    auto totalWeights = 10;
+                    for(size_t i = 0; i < totalWeights; i++){
+                        GlobalStatistics::weightValues_.push_back(GlobalStatistics::primes_[hrand() % 30]);
+                    }
+
+        //GlobalStatistics::mlpOrder++;
+
+                    auto bestSolution = GeneticTrainer<SharedSecretGenerator>::survivalOfTheFittest(
+                                100000, // max epochs
+                                time,  // max time (msec)
+                                80,    // villages
+                                15,      // village population
+                                1.0,    // mutation probability
+                                0.1,   // cross probability
+                                0.52,   // top X cut-off ("elitism" factor)
+                                1.1,    // stagnation coefficient
+                                2,     // innovationsProtectedEpochs
+                                0,     // output level
+                                0.9999);  // target fitness
+
+                    auto best = bestSolution;
+                    char color = '0' + clr[static_cast<uint8_t>(floor(best.fitness_ * 7))];
+
+                    std::cout << "\033[3" << color << "m" << std::setprecision(4) << best.fitness_ << "\t";
+                    std::cout.flush();
+                }
+                std::cout << std::endl;
+            }
+//        }
+//    }
+    return 0;
+
 
     auto bestSolution = GeneticTrainer<SharedSecretGenerator>::survivalOfTheFittest(
                 100000, // max epochs
-                15 * 3600 * 1000,  // max time (msec)
-                1000,    // villages
+                1 * 1000,  // max time (msec)
+                100,    // villages
                 5,      // village population
                 1.0,    // mutation probability
                 0.1,   // cross probability
                 0.52,   // top X cut-off ("elitism" factor)
                 1.1,    // stagnation coefficient
-                10,     // innovationsProtectedEpochs
-                86,     // output level
+                2,     // innovationsProtectedEpochs
+                0,     // output level
                 0.9999);  // target fitness
 
     auto best = bestSolution;
@@ -126,8 +178,10 @@ int main()
             views[j][i][1] = vtkSmartPointer<vtkGraphLayoutView>::New();
             views[j][i][1]->GetRenderWindow()->SetPosition(j * 800 + 300, i * 400);
 
-            uint32_t r1 = hrand() & 0xFF;
-            uint32_t r2 = hrand() & 0xFF;
+            uint32_t r1 = hrand() % 10;
+            uint32_t r2 = hrand() % 10;
+            while(r2 == r1) r2 = hrand() % 10;
+
             VisualizationTester::visVector(keygen.getInternalResults({r1}), views[i][j][0]);
             auto outr1 = keygen.calcOutUint32({r1});
 

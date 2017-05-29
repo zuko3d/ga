@@ -35,6 +35,11 @@ VTK_MODULE_INIT(vtkRenderingFreeType);
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
+#include <vtkCubeSource.h>
+#include <vtkPolyData.h>
+
+#include <thread>
+#include <chrono>
 
 VisualizationTester::VisualizationTester()
 {
@@ -288,4 +293,40 @@ void VisualizationTester::visNetwork(const MultilayerPerceptron &mlp, vtkSmartPo
       view->SetVertexLabelArrayName("VertexIDs"); //default is "labels"
       view->ResetCamera();
       view->Render();
+}
+
+void VisualizationTester::drawTable(const std::vector<std::vector<double> > table)
+{
+    GlobalStatistics::windows_.push_back(vtkSmartPointer<vtkRenderWindow>::New());
+    auto& renderWindow = GlobalStatistics::windows_.back();
+
+    vtkSmartPointer<vtkCubeSource> cubeSource =
+        vtkSmartPointer<vtkCubeSource>::New();
+
+    //cubeSource->GetPolyDataInput->S
+      // Create a mapper and actor.
+      vtkSmartPointer<vtkPolyDataMapper> mapper =
+        vtkSmartPointer<vtkPolyDataMapper>::New();
+      mapper->SetInputConnection(cubeSource->GetOutputPort());
+
+      vtkSmartPointer<vtkActor> actor =
+        vtkSmartPointer<vtkActor>::New();
+      actor->SetMapper(mapper);
+
+      // Create a renderer, render window, and interactor
+      vtkSmartPointer<vtkRenderer> renderer =
+        vtkSmartPointer<vtkRenderer>::New();
+
+      renderWindow->AddRenderer(renderer);
+      vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
+        vtkSmartPointer<vtkRenderWindowInteractor>::New();
+      renderWindowInteractor->SetRenderWindow(renderWindow);
+
+      // Add the actors to the scene
+      renderer->AddActor(actor);
+      renderer->SetBackground(1., 1., 1.);
+
+      // Render and interact
+      renderWindow->Render();
+      std::this_thread::sleep_for(std::chrono::milliseconds(2));
 }

@@ -8,7 +8,7 @@ LIBS += -lvtkViewsCore-8.0 -lvtkInteractionStyle-8.0 -lvtkRenderingOpenGL2-8.0
 LIBS += -lvtkRenderingFreeType-8.0 -lvtkFiltersSources-8.0 -lvtkCommonExecutionModel-8.0
 QMAKE_CXXFLAGS += -fopenmp
 
-#QMAKE_CXXFLAGS += -O3
+QMAKE_CXXFLAGS += -O3
 
 INCLUDEPATH += /usr/local/include/vtk-8.0/
 

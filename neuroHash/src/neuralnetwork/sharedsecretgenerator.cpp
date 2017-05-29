@@ -145,7 +145,7 @@ void SharedSecretGenerator::calcFitness()
 
     double unique = static_cast<double>(outs.size()) / total;
 
-    //if(outs.size() > 8) unique = 1.0;
+    if(outs.size() > 2 * sz) unique = 1.0;
 
     fitness_ = pts * unique;
     // fitness_ = pts;

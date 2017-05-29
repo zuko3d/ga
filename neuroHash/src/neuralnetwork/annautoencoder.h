@@ -70,7 +70,7 @@ AnnAutoEncoder<Ann> AnnAutoEncoder<Ann>::mutate() const
         size_t layer = hrand() % (ret.ann_.barriers_.size() - 1);
         size_t neuron = hrand() % ret.ann_.barriers_[layer].size();
 
-        ret.ann_.barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % ret.ann_.order_ + GlobalStatistics::startPrime ];
+        ret.ann_.barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % ret.ann_.order_ + GlobalStatistics::startingPrimeForWeights ];
     }
 
     auto r = 6;
@@ -80,7 +80,7 @@ AnnAutoEncoder<Ann> AnnAutoEncoder<Ann>::mutate() const
         size_t w = hrand() % ret.ann_.weights_[layer][neuron].size();
 
         //ret.ann_.weights_[layer][neuron][w] = hrand(); // & ret.ann_.order_;
-        ret.ann_.weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % ret.ann_.order_ + GlobalStatistics::startPrime ];
+        ret.ann_.weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % ret.ann_.order_ + GlobalStatistics::startingPrimeForWeights ];
     }
 
     ret.source = 1;

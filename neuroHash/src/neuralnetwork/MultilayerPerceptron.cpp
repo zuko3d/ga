@@ -19,7 +19,7 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
     for (size_t i = 0; i < layers.size(); i++) {
 		barriers_[i].resize(layers[i]);
 		for (auto& b : barriers_[i]) {
-            b = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
+            b = GlobalStatistics::barrierValues_[ hrand() % GlobalStatistics::barrierValues_.size()];
 		}
 	}
     for(auto& b : barriers_.back()){
@@ -33,7 +33,7 @@ MultilayerPerceptron::MultilayerPerceptron(std::vector<size_t> layers)
 			w.resize(barriers_[i + 1].size());
 			for (auto& weight : w) {
                 //weight = hrand() & order_;
-                weight = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
+                weight = GlobalStatistics::weightValues_[ hrand() % GlobalStatistics::weightValues_.size()];
 			}
 		}
 	}
@@ -182,7 +182,7 @@ void MultilayerPerceptron::randomlyChangeWeight()
     size_t w = hrand() % weights_[layer][neuron].size();
 
     //ret.ann_.weights_[layer][neuron][w] = hrand(); // & ret.ann_.order_;
-    weights_[layer][neuron][w] = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
+    weights_[layer][neuron][w] = GlobalStatistics::weightValues_[ hrand() % GlobalStatistics::weightValues_.size() ];
 }
 
 void MultilayerPerceptron::randomlyChangeBias()
@@ -190,7 +190,7 @@ void MultilayerPerceptron::randomlyChangeBias()
     size_t layer = hrand() % (barriers_.size());
     size_t neuron = hrand() % barriers_[layer].size();
 
-    barriers_[layer][neuron] = GlobalStatistics::primes_[ hrand() % order_ + GlobalStatistics::startPrime ];
+    barriers_[layer][neuron] = GlobalStatistics::barrierValues_[ hrand() % GlobalStatistics::barrierValues_.size() ];
 }
 
 void MultilayerPerceptron::reduceWeights()
