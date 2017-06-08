@@ -10,7 +10,6 @@
 
 typedef std::function<std::string(uint32_t*, size_t size)> hashFunc_t;
 
-
 inline std::string toHex(std::string str) {
 	static char hex[] = "0123456879ABCDEF";
 	std::string ret = "0x";

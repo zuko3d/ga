@@ -1,7 +1,7 @@
 #include "vtkAutoInit.h"
-VTK_MODULE_INIT(vtkRenderingOpenGL2); // VTK was built with vtkRenderingOpenGL2
-VTK_MODULE_INIT(vtkInteractionStyle);
-VTK_MODULE_INIT(vtkRenderingFreeType);
+VTK_MODULE_INIT(vtkRenderingOpenGL2) // VTK was built with vtkRenderingOpenGL2
+VTK_MODULE_INIT(vtkInteractionStyle)
+VTK_MODULE_INIT(vtkRenderingFreeType)
 
 #include "visualizationtester.h"
 
@@ -295,7 +295,7 @@ void VisualizationTester::visNetwork(const MultilayerPerceptron &mlp, vtkSmartPo
       view->Render();
 }
 
-void VisualizationTester::drawTable(const std::vector<std::vector<double> > table)
+void VisualizationTester::drawTable(const std::vector<std::vector<double> >& table)
 {
     GlobalStatistics::windows_.push_back(vtkSmartPointer<vtkRenderWindow>::New());
     auto& renderWindow = GlobalStatistics::windows_.back();

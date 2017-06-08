@@ -19,7 +19,7 @@ public:
 
     static void visNetwork(const MultilayerPerceptron& mlp, vtkSmartPointer<vtkGraphLayoutView> &view);
 
-    static void drawTable(const std::vector<std::vector<double> > table);
+    static void drawTable(const std::vector<std::vector<double> > &table);
 };
 
 #endif // VISUALIZATIONTESTER_H

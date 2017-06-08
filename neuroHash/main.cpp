@@ -5,9 +5,12 @@
 
 #include "src/neuralnetwork/sharedsecretgenerator.h"
 #include "src/neuralnetwork/annautoencoder.h"
-#include "blake/blake2.h"
+#include "third-party/blake/blake2.h"
 
 #include "src/testers/visualizationtester.h"
+
+#include "unitTests/affinetester.h"
+#include "unitTests/logistictester.h"
 
 #include <vtkRenderWindow.h>
 
@@ -27,6 +30,9 @@ int main()
 //    HashTester::overallTest(blake512);
 //    return 0;
 
+    LogisticTester::doNumericTest();
+    return 0;
+
     GlobalStatistics::startingPrimeForWeights = 10;
     GlobalStatistics::startingPrimeForBarriers = 0;
     GlobalStatistics::mlpOrder = 4;
@@ -44,18 +50,18 @@ int main()
 //            }
 //            std::cout << std::endl;
 
-            for(int time = 100; time < 100000; time *= 2) {
+            for(int time = 100; time <= 409600; time *= 2) {
                 std::cout << time << ":\t";
                 for(int trial = 0; trial < 10; trial++) {
 
-                    auto totalBarriers = 2;
+                    size_t totalBarriers = 2;
                     GlobalStatistics::barrierValues_.clear();
                     for(size_t i = 0; i < totalBarriers; i++){
                         GlobalStatistics::barrierValues_.push_back(GlobalStatistics::primes_[hrand() % 22]);
                     }
 
                     GlobalStatistics::weightValues_.clear();
-                    auto totalWeights = 10;
+                    size_t totalWeights = 10;
                     for(size_t i = 0; i < totalWeights; i++){
                         GlobalStatistics::weightValues_.push_back(GlobalStatistics::primes_[hrand() % 30]);
                     }

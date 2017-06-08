@@ -35,15 +35,7 @@ PerceptronHasher PerceptronHasher::cross(const PerceptronHasher & p1, const Perc
 
 	resultAllele = reinterpret_cast<uchar*>(const_cast<double*>(ret.weights.data()));
 
-	for (int i = 0; i < weights.size() * sizeof(double) / sizeof(uchar); i++) {
-		//        qDebug() << QString::number( *allele1, 2 );
-		//        qDebug() << QString::number( *allele2, 2 );
-		//        qDebug() << QString::number( *allele3, 2 );
-
-		auto result = ((*allele1) | (*allele2)) &
-			((*allele1) | (*allele3)) &
-			((*allele2) | (*allele3));
-
+    for (size_t i = 0; i < weights.size() * sizeof(double) / sizeof(uchar); i++) {
 		//        qDebug() << QString::number( result, 2 );
 
 		*resultAllele = ((*allele1) | (*allele2)) &

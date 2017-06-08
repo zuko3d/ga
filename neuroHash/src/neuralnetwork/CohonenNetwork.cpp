@@ -7,7 +7,7 @@ CohonenNetwork::CohonenNetwork(std::vector<size_t> layers)
 {
 	barriers_.resize(layers.size());
 
-	for (int i = 0; i < layers.size(); i++) {
+    for (size_t i = 0; i < layers.size(); i++) {
 		barriers_[i].resize(layers[i]);
 		for (auto& b : barriers_[i]) {
 			b = 1 + hrand();
@@ -15,7 +15,7 @@ CohonenNetwork::CohonenNetwork(std::vector<size_t> layers)
 	}
 
 	weights_.resize(barriers_.size() - 1);
-	for (int i = 0; i < weights_.size(); i++) {
+    for (size_t i = 0; i < weights_.size(); i++) {
 		weights_[i].resize(barriers_[i].size());
 		for (auto& w : weights_[i]) {
 			w.resize(barriers_[i + 1].size());
@@ -38,31 +38,31 @@ std::string CohonenNetwork::calcOut(const std::vector<uint32_t>& input)
 
 	current = input;
 	
-	for (int i = 0; i < weights_.size(); i++) {
+    for (size_t i = 0; i < weights_.size(); i++) {
 		next.resize(barriers_[i + 1].size(), 0);
 		size_t winner = 0;
-		for (int j = 1; j < current.size(); j++) {
+        for (size_t j = 1; j < current.size(); j++) {
 			if (current[j] > current[winner]) {
 				winner = j;
 			}
 		}
 		auto sz = weights_[i][winner].size();
 		auto curWinner = current[winner];
-		for (int k = 0; k < sz; k++) {
+        for (size_t k = 0; k < sz; k++) {
 			next[k] += curWinner * weights_[i][winner][k];
 		}
 		
 
 		current.resize(next.size());
 		auto& barrier = barriers_[i + 1];
-		for (int j = 0; j < barrier.size(); j++) {
+        for (size_t j = 0; j < barrier.size(); j++) {
 			current[j] = barrierFunction(next[j], barrier[j]);
 		}
 	}
 
 	std::string ret;
 	ret.resize(current.size() * sizeof(current[0]));
-	for (int i = 0; i < current.size(); i++) {
+    for (size_t i = 0; i < current.size(); i++) {
 		current[i] = static_cast<uint32_t>(next[i] & 0xFFFFFFFF);
 	}
 	memcpy(&ret[0], &current[0], ret.size());

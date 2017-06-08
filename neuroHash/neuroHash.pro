@@ -6,9 +6,12 @@ LIBS += -lpthread -lgomp -lvtkCommonCore-8.0 -lvtkRenderingCore-8.0 -lvtkCommonD
 LIBS += -lvtkRenderingAnnotation-8.0 -lvtkInfovisLayout-8.0 -lvtkViewsInfovis-8.0
 LIBS += -lvtkViewsCore-8.0 -lvtkInteractionStyle-8.0 -lvtkRenderingOpenGL2-8.0
 LIBS += -lvtkRenderingFreeType-8.0 -lvtkFiltersSources-8.0 -lvtkCommonExecutionModel-8.0
+
 QMAKE_CXXFLAGS += -fopenmp
 
-QMAKE_CXXFLAGS += -O3
+QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic
+
+QMAKE_CXXFLAGS_RELEASE += -O3
 
 INCLUDEPATH += /usr/local/include/vtk-8.0/
 
@@ -17,8 +20,8 @@ SOURCES += main.cpp \
     src/evolution/testphenotypediofant.cpp \
     src/evolution/trainerphenotype.cpp \
     src/neuralnetwork/Simple2x2x1Perceptron.cpp \
-    blake/blake2b.c \
-    blake/blake2bp.c \
+    third-party/blake/blake2b.c \
+    third-party/blake/blake2bp.c \
     src/neuralnetwork/MultilayerPerceptron.cpp \
     src/testers/HashTester.cpp \
     src/global/globalstatistics.cpp \
@@ -28,7 +31,16 @@ SOURCES += main.cpp \
     src/neuralnetwork/PerceptronHasher.cpp \
     src/neuralnetwork/fastmlp.cpp \
     src/neuralnetwork/sharedsecretgenerator.cpp \
-    src/testers/visualizationtester.cpp
+    src/testers/visualizationtester.cpp \
+    src/compgraph/affine.cpp \
+    unitTests/affinetester.cpp \
+    src/compgraph/logistic.cpp \
+    unitTests/logistictester.cpp \
+    src/compgraph/computationnode.cpp \
+    src/compgraph/computationalgraph.cpp \
+    src/compgraph/summator.cpp \
+    src/compgraph/functionop.cpp \
+    src/compgraph/square.cpp
 
 HEADERS += \
     src/evolution/phenotype.h \
@@ -39,12 +51,12 @@ HEADERS += \
     src/evolution/testphenotypediofant.h \
     src/evolution/trainerphenotype.h \
     src/neuralnetwork/Simple2x2x1Perceptron.h \
-    blake/blake2.h \
-    blake/blake2b-load-sse2.h \
-    blake/blake2b-load-sse41.h \
-    blake/blake2b-round.h \
-    blake/blake2-config.h \
-    blake/blake2-impl.h \
+    third-party/blake/blake2.h \
+    third-party/blake/blake2b-load-sse2.h \
+    third-party/blake/blake2b-load-sse41.h \
+    third-party/blake/blake2b-round.h \
+    third-party/blake/blake2-config.h \
+    third-party/blake/blake2-impl.h \
     src/neuralnetwork/MultilayerPerceptron.h \
     src/testers/HashTester.h \
     src/neuralnetwork/annautoencoder.h \
@@ -55,4 +67,13 @@ HEADERS += \
     src/neuralnetwork/PerceptronHasher.h \
     src/neuralnetwork/fastmlp.h \
     src/neuralnetwork/sharedsecretgenerator.h \
-    src/testers/visualizationtester.h
+    src/testers/visualizationtester.h \
+    src/compgraph/affine.h \
+    unitTests/affinetester.h \
+    src/compgraph/logistic.h \
+    unitTests/logistictester.h \
+    src/compgraph/computationnode.h \
+    src/compgraph/computationalgraph.h \
+    src/compgraph/summator.h \
+    src/compgraph/functionop.h \
+    src/compgraph/square.h
