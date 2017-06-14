@@ -17,10 +17,11 @@ void Logistic::forward(const std::vector<numeric_t> &input, std::vector<numeric_
         if((*it_in) > 30) {
             *it_out = 1.0;
         } else if ((*it_in) < -30) {
-            *it_out = -1.0;
+            *it_out = 0.0;
         } else {
             *it_out = 1.0 / ( 1.0 + exp(- (*it_in)));
         }
+
         it_in++;
         it_out++;
     }

@@ -40,7 +40,9 @@ SOURCES += main.cpp \
     src/compgraph/computationalgraph.cpp \
     src/compgraph/summator.cpp \
     src/compgraph/functionop.cpp \
-    src/compgraph/square.cpp
+    src/compgraph/square.cpp \
+    src/compgraph/bias.cpp \
+    src/compgraph/dotproduct.cpp
 
 HEADERS += \
     src/evolution/phenotype.h \
@@ -76,4 +78,6 @@ HEADERS += \
     src/compgraph/computationalgraph.h \
     src/compgraph/summator.h \
     src/compgraph/functionop.h \
-    src/compgraph/square.h
+    src/compgraph/square.h \
+    src/compgraph/bias.h \
+    src/compgraph/dotproduct.h

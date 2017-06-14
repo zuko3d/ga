@@ -8,6 +8,8 @@
 #include <random>
 #include <functional>
 
+#define UNUSED(x) (void)(x)
+
 typedef std::function<std::string(uint32_t*, size_t size)> hashFunc_t;
 
 inline std::string toHex(std::string str) {

@@ -11,7 +11,7 @@ int LogisticTester::doNumericTest()
     std::cout << __FUNCTION__ << std::endl;
 
     Logistic g;
-    size_t ntests = 1000;
+    size_t ntests = 10000;
     std::vector<double> in(ntests);
     std::vector<double> out(ntests);
     std::vector<double> right(ntests);
@@ -21,6 +21,15 @@ int LogisticTester::doNumericTest()
         in[i] = log(num);
         right[i] = 1.0 / (1.0 + 1.0 / num);
     }
+
+    in[0] = 0.0;
+    right[0] = 0.5;
+
+    in[1] = -1000.0;
+    right[1] = 0.0;
+
+    in[2] = 1000.0;
+    right[2] = 1.0;
 
     g.forward(in, out);
 

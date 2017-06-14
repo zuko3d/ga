@@ -7,6 +7,12 @@
 #include "src/neuralnetwork/annautoencoder.h"
 #include "third-party/blake/blake2.h"
 
+#include "src/compgraph/computationalgraph.h"
+#include "src/compgraph/bias.h"
+#include "src/compgraph/summator.h"
+#include "src/compgraph/square.h"
+#include "src/compgraph/dotproduct.h"
+
 #include "src/testers/visualizationtester.h"
 
 #include "unitTests/affinetester.h"
@@ -27,10 +33,24 @@ std::string blake512(uint32_t in) {
 
 int main()
 {
-//    HashTester::overallTest(blake512);
-//    return 0;
+    std::vector<numeric_t> input = {1, -72, 3, 4};
+    ComputationalGraph cg(input.size());
 
-    LogisticTester::doNumericTest();
+    cg.addNode(new DotProduct);
+    cg.addNode(new Bias);
+    cg.addNode(new Square);
+
+    cg.prepareForCalculations();
+    std::vector<double> out(1);
+
+    for(int i = 0; i < 10; i++) {
+        cg.forward(input, out);
+        std::cout << out[0] << std::endl;
+        for(auto& x: out) x *= -1;
+        cg.backward(out);
+        cg.applyLearnedData(5.0);
+    }
+
     return 0;
 
     GlobalStatistics::startingPrimeForWeights = 10;

@@ -4,3 +4,8 @@ ComputationNode::ComputationNode()
 {
 
 }
+
+ComputationNode::~ComputationNode()
+{
+
+}

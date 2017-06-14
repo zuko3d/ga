@@ -1,15 +1,19 @@
-#ifndef SUMMATOR_H
-#define SUMMATOR_H
+#ifndef BIAS_H
+#define BIAS_H
 
-#include "src/global/global.h"
+#include "../global/global.h"
 
 #include "computationnode.h"
 
-class Summator : public ComputationNode
+#include <vector>
+
+class Bias : public ComputationNode
 {
 public:
-    Summator() { }
-    ~Summator() { }
+    Bias();
+    Bias(numeric_t bias);
+
+    ~Bias();
 
     /**
      * @brief Initialize all internal node data. Will be called once at nodes's creation
@@ -25,17 +29,25 @@ public:
 
     void forward(
             const std::vector<numeric_t> &input,
-            std::vector<numeric_t> &output) const;
+            std::vector<numeric_t> &output
+            ) const;
 
     void backward(
             const std::vector<numeric_t> &lhs,
             const std::vector<numeric_t> &rhs,
-            std::vector<numeric_t> &output
-            );
+            std::vector<numeric_t> &output);
 
     void applyLearnedData(double learningRate = 1.0);
 
-    size_t outputSize() const { return 1; }
+    std::string info() const;
+
+    size_t outputSize() const { return inputSize_; }
+
+protected:
+    numeric_t bias_;
+
+    numeric_t cumulative_delta_ = 0.0;
+    int cumuvative_n_ = 0;
 };
 
-#endif // SUMMATOR_H
+#endif // BIAS_H
