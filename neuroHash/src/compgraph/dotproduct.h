@@ -42,7 +42,7 @@ public:
 
     std::string info() const;
 
-    size_t outputSize() const { return inputSize_; }
+    size_t outputSize() const { return 1; }
 
 protected:
     std::vector<numeric_t> vec_;

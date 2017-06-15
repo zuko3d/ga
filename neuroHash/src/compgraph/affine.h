@@ -7,28 +7,42 @@
 
 #include <vector>
 
-class Affine
+class Affine : public ComputationNode
 {
 public:
-    Affine();
+    Affine(size_t inputSize, size_t outputSize);
+    Affine(size_t inputSize, size_t outputSize, const std::vector<numeric_t> &values);
 
-    Affine(size_t rows, size_t cols);
+    ~Affine() { }
 
     void init(
-            std::vector<int> iparams,
-            std::vector<double> dparams,
-            std::vector<numeric_t> values
+            const std::vector<int> &iparams,
+            const std::vector<double> &dparams,
+            const std::vector<numeric_t> &values
             );
 
-    void init(size_t rows, size_t cols);
-    void init(size_t rows, size_t cols, const std::vector<numeric_t> &matrix);
+    void forward(
+            const std::vector<numeric_t> &input,
+            std::vector<numeric_t> &output
+            ) const;
 
-    void forward(const std::vector<numeric_t> &input, std::vector<numeric_t> &output);
+    void backward(
+            const std::vector<numeric_t> &x,
+            const std::vector<numeric_t> &df,
+            std::vector<numeric_t> &output);
 
+    void applyLearnedData(double learningRate = 1.0);
+
+    void setInputSize(size_t inputSize) { }
+
+    size_t outputSize() const { return rows_; }
 protected:
     size_t rows_ = 0;
     size_t cols_ = 0;
     std::vector<numeric_t> matrix_;
+
+    std::vector<numeric_t> cumulative_delta_;
+    int cumuvative_n_ = 0;
 };
 
 #endif // AFFINE_H

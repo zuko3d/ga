@@ -86,3 +86,69 @@ void ComputationalGraph::addNode(ComputationNode *node)
 
     prepared_ = false;
 }
+
+numeric_t ComputationalGraph::train(const std::vector<std::vector<numeric_t> > &inputs, const std::vector<std::vector<numeric_t> > &expectedOutputs, double learningRate)
+{
+    assert(inputs.size() == expectedOutputs.size());
+    assert(inputs.front().size() == nodes_.front()->inputSize());
+    assert(expectedOutputs.front().size() == nodes_.back()->outputSize());
+
+    auto expectedOut = expectedOutputs.begin();
+    std::vector<numeric_t> out;
+    out.resize(nodes_.back()->outputSize());
+
+    numeric_t totalError = 0;
+
+    for(const auto& input: inputs) {
+        forward(input, out);
+        std::transform(out.begin(), out.end(), expectedOut->begin(), out.begin(),
+                [] (numeric_t guess, numeric_t truth) -> numeric_t {
+                    return truth - guess;
+                });
+
+        for(const auto& num: out) {
+            totalError += num * num;
+        }
+
+        backward(out);
+        expectedOut++;
+    }
+
+    applyLearnedData(learningRate);
+
+    // std::cout << "totalError = " << totalError << std::endl;
+    return totalError;
+}
+
+void ComputationalGraph::printResults(const std::vector<std::vector<numeric_t> > &inputs, const std::vector<std::vector<numeric_t> > &expectedOutputs)
+{
+    auto expected = expectedOutputs.begin();
+    std::vector<numeric_t> out;
+    out.resize(nodes_.back()->outputSize());
+
+    for(const auto& input: inputs) {
+        for(const auto& i: input) {
+            std::cout << i << "\t";
+        }
+        std::cout << ":\t";
+        for(const auto& i: *expected) {
+            std::cout << i << "\t";
+        }
+
+        std::cout << "|\t";
+
+        forward(input, out);
+        for(const auto& i: out) {
+            std::cout << i << "\t";
+        }
+        std::cout << std::endl;
+
+        expected++;
+    }
+
+}
+
+ComputationNode *ComputationalGraph::operator [](size_t index)
+{
+    return nodes_[index];
+}

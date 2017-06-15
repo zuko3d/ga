@@ -10,8 +10,7 @@ int AffineTester::doNumericTest()
 
     std::cout << __FUNCTION__ << std::endl;
 
-    Affine g;
-    g.init(2, 3, {2, -5, 6, -2, 3, 8});
+    Affine g(2, 3, {2, -5, 6, -2, 3, 8});
     std::vector<double> in = {1, 2, 3};
     std::vector<double> out;
 

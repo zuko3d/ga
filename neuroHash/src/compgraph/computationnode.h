@@ -64,6 +64,10 @@ public:
 
     virtual void setInputSize(size_t inputSize) { inputSize_ = inputSize; }
 
+    virtual std::string info() const { return ""; }
+
+    virtual std::string name() const { return "Abstract ComputationNode"; }
+
 protected:
     size_t inputSize_ = 0;
 };

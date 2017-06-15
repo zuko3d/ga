@@ -12,6 +12,7 @@
 #include "src/compgraph/summator.h"
 #include "src/compgraph/square.h"
 #include "src/compgraph/dotproduct.h"
+#include "src/compgraph/affine.h"
 
 #include "src/testers/visualizationtester.h"
 
@@ -33,23 +34,50 @@ std::string blake512(uint32_t in) {
 
 int main()
 {
-    std::vector<numeric_t> input = {1, -72, 3, 4};
-    ComputationalGraph cg(input.size());
+    std::vector<std::vector<numeric_t> > input = {
+        {0, 0},
+        {0, 1},
+        {1, 0},
+        {1, 1}
+    };
+    std::vector<std::vector<numeric_t> > truth = {
+        {0},
+        {1},
+        {1},
+        {0}
+    };
+    ComputationalGraph cg(input[0].size());
 
-    cg.addNode(new DotProduct);
+    cg.addNode(new Affine(2, 4));
     cg.addNode(new Bias);
+    cg.addNode(new Summator);
+//    cg.addNode(new Bias);
     cg.addNode(new Square);
 
     cg.prepareForCalculations();
-    std::vector<double> out(1);
 
-    for(int i = 0; i < 10; i++) {
-        cg.forward(input, out);
-        std::cout << out[0] << std::endl;
-        for(auto& x: out) x *= -1;
-        cg.backward(out);
-        cg.applyLearnedData(5.0);
+    numeric_t prevErr = 1e6;
+    numeric_t err;
+    double LR = 1.0;
+
+    for(int i = 0; i < 100000; i++) {
+        err = cg.train(input, truth, LR);
+        if(prevErr < err) {
+            LR *= 0.9;
+            LR = max(1e-6, LR);
+//            LR = min(1.0, LR);
+        } else {
+            LR *= 1.05;
+//            LR = max(1.0, LR);
+            LR = min(100.0, LR);
+        }
+
+        prevErr = err;
+        std::cout << err << std::endl;
     }
+
+    std::cout << "LR = " << LR << std::endl;
+    cg.printResults(input, truth);
 
     return 0;
 
@@ -57,7 +85,7 @@ int main()
     GlobalStatistics::startingPrimeForBarriers = 0;
     GlobalStatistics::mlpOrder = 4;
 
-    static const char clr[] = { 0, 5, 4, 6, 2, 7, 3, 1};
+    static const char clr[] = { 0, 5, 4, 6, 2, 7, 3, 1 };
 
 //    for(size_t bpwr =22; bpwr < 25; bpwr ++){
 //        std::cout << "\033[39mbar power: " << bpwr << " ==================================" << std::endl;

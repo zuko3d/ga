@@ -26,6 +26,19 @@ public:
      */
     void addNode(ComputationNode* node);
 
+    numeric_t train(
+            const std::vector<std::vector<numeric_t> >& inputs,
+            const std::vector<std::vector<numeric_t> >& expectedOutputs,
+            double learningRate = 1.0
+            );
+
+    void printResults(
+            const std::vector<std::vector<numeric_t> >& inputs,
+            const std::vector<std::vector<numeric_t> >& expectedOutputs
+            );
+
+    ComputationNode* operator [](size_t index);
+
 protected:
     bool prepared_ = false;
 

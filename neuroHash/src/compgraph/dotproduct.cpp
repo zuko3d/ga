@@ -2,21 +2,21 @@
 
 #include <algorithm>
 
-DotProduct::DotProduct(size_t inputSize) :
-    inputSize_(inputSize)
+DotProduct::DotProduct(size_t inputSize)
 {
+    inputSize_ = inputSize;
 
-}
-
-DotProduct::DotProduct(const std::vector<numeric_t> &vec) :
-    vec_(vec)
-{
-    inputSize_ = vec_.size();
+    vec_.resize(inputSize_);
 
     cumulative_delta_.resize(vec_.size());
     for(auto& x: cumulative_delta_) {
         x = 0;
     }
+}
+
+DotProduct::DotProduct(const std::vector<numeric_t> &vec)
+{
+    init({}, {}, vec);
 }
 
 void DotProduct::init(const std::vector<int> &iparams, const std::vector<double> &dparams, const std::vector<numeric_t> &values)
@@ -54,11 +54,11 @@ void DotProduct::backward(const std::vector<numeric_t> &lhs, const std::vector<n
     assert(rhs.size() == 1);
     output.resize(lhs.size());
 
-    numeric_t gradNormLhs = 0;
+    numeric_t gradNormX = 0;
     numeric_t gradNormInner = 0;
 
     for(const auto& x: lhs) {
-        gradNormLhs += x * x;
+        gradNormX += x * x;
     }
 
     for(const auto& x: vec_) {
@@ -67,33 +67,66 @@ void DotProduct::backward(const std::vector<numeric_t> &lhs, const std::vector<n
 
     auto df = rhs[0];
 
-    //TODO: handle case |gradient| = 0
-
     auto xi = lhs.begin();
     auto ai = vec_.begin();
     auto cum_delta = cumulative_delta_.begin();
 
     for(auto& out: output) {
-        (*cum_delta) += df * (*xi) / gradNormLhs;
-        out = df * (*ai) / gradNormInner;
+        //TODO: improve performance!
+        if(gradNormX > 1e-4) {
+            (*cum_delta) += df * (*xi) / gradNormX;
+        } else {
+            (*cum_delta) += df;
+        }
 
-        cumuvative_n_++;
+        if(gradNormInner > 1e-4) {
+            out = df * (*ai) / gradNormInner;
+        } else {
+            out = df;
+        }
+
         xi++;
         ai++;
         cum_delta++;
     }
+
+    cumuvative_n_++;
 }
 
 void DotProduct::applyLearnedData(double learningRate)
 {
-    auto cumuvative_n = cumuvative_n_;
+    double norm = 0;
+    for(const auto& x: cumulative_delta_) {
+        norm += x * x;
+    }
+
+    norm = sqrt(norm);
+
+    double deltaFactor;
+    if(norm > 1e-4) {
+        deltaFactor = learningRate /cumuvative_n_ / norm;
+    } else {
+        deltaFactor = learningRate;
+    }
+
     std::transform(cumulative_delta_.begin(), cumulative_delta_.end(), vec_.begin(), vec_.begin(),
-                   [cumuvative_n, learningRate] (numeric_t delta, numeric_t x) -> numeric_t {
-                        return x + delta * learningRate / cumuvative_n;
+                   [deltaFactor] (numeric_t delta, numeric_t x) -> numeric_t {
+                        return x + delta * deltaFactor;
                    });
 
     cumuvative_n_ = 0;
     for(auto& x: cumulative_delta_) {
         x = 0;
     }
+}
+
+std::string DotProduct::info() const
+{
+    std::string ret;
+
+    for(const auto& v: vec_) {
+        ret += std::to_string(v) + " ";
+    }
+
+    return ret;
 }
